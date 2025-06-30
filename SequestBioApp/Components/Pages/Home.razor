@@ -12,49 +12,98 @@
     <div class="text-center mt-5">
         <h1 class="display-5 fw-bold">Welcome to <strong>SequestBioUI.App </strong></h1>
         <p class="text-muted fst-italic">No score generated yet. Click the button below to begin.</p>
-        <InputFile OnChange="HandleFileSelected" accept=".tsv"  MaxFileSize="10485760" />
+        <InputFile OnChange="HandleFileSelected" accept=".tsv" MaxFileSize="10485760" />
         <button class="btn btn-primary mt-3" @onclick="UploadAndGenerateScore" disabled="@(!fileSelected)">Generate Score</button>
     </div>
 }
 else
 {
-    <div class="card m-5 p-4 shadow" style="max-width: 450px; margin: auto;">
-        <h5 class="card-title mb-2">Proprietary Risk Score</h5>
-        <h6 class="text-muted mb-4">"Sequestone Score"</h6>
+    <div class="container mt-5">
+        <div class="row justify-content-center gy-4">
+            <!-- Card 1: Sequestone Score -->
+            <div class="col-md-4">
+                <div class="card p-4 shadow h-100 d-flex flex-column justify-content-between" style="min-height: 400px;">
+                    <div>
+                        <h5 class="card-title mb-2">Proprietary Risk Score</h5>
+                        <h6 class="text-muted mb-4">"Sequestone Score"</h6>
 
-        <RadzenGauge Min="0" Max="100" Value="@scoreResult.Score" 
-                     Style="width: 100%; height: 160px;" 
-                     Color="@GetGaugeColor(scoreResult.Score)" />
+                        <RadzenGauge Min="0" Max="100" Value="@scoreResult.Score"
+                                     Style="width: 100%; height: 160px;"
+                                     Color="@GetGaugeColor(scoreResult.Score)" />
 
-        <div class="text-center mt-3">
-            <h3>@scoreResult.Score <small class="text-muted">Score</small></h3>
-            <p class="fw-bold">Risk Category: 
-                <span style="color:@GetCategoryColor(scoreResult.RiskCategory)">
-                    @scoreResult.RiskCategory
-                </span>
-            </p>
+                        <div class="text-center mt-3">
+                            <h3>@scoreResult.Score <small class="text-muted">Score</small></h3>
+                            <p class="fw-bold">Risk Category:
+                                <span style="color:@GetCategoryColor(scoreResult.RiskCategory)">
+                                    @scoreResult.RiskCategory
+                                </span>
+                            </p>
+                        </div>
+
+                        <p class="text-muted mt-2" style="font-size: 0.9rem;">
+                            @scoreResult.Recommendation
+                        </p>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <button class="btn btn-secondary" @onclick="UploadAndGenerateScore" disabled="@(!fileSelected)">
+                            Recalculate
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: AI Confidence Score -->
+            <div class="col-md-4">
+                <div class="card p-4 shadow h-100 d-flex flex-column justify-content-between" style="min-height: 400px;">
+                    <div>
+                        <h5 class="card-title mb-2">AI Confidence Score</h5>
+                        <h6 class="text-muted mb-4">Model Certainty</h6>
+
+                        <RadzenGauge Min="0" Max="100" Value="@scoreResult.Confidence"
+                                     Style="width: 100%; height: 160px;" />
+
+                        <div class="text-center mt-3">
+                            <h3>@scoreResult.Confidence <small class="text-muted">%</small></h3>
+                            <p class="text-muted">Indicates certainty based on input data quality.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Genomic Instability -->
+            <div class="col-md-4">
+                <div class="card p-4 shadow h-100 d-flex flex-column justify-content-between" style="min-height: 400px;">
+                    <div>
+                        <h5 class="card-title mb-2">Genomic Instability</h5>
+                        <h6 class="text-muted mb-4">Composite Mutation Index</h6>
+
+                        <RadzenGauge Min="0" Max="100" Value="@scoreResult.GenomicInstability"
+                                     Style="width: 100%; height: 160px;" />
+
+                        <div class="text-center mt-3">
+                            <h3>@scoreResult.GenomicInstability <small class="text-muted">%</small></h3>
+                            <p class="text-muted">Estimates mutation burden and cellular heterogeneity.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <p class="text-muted mt-2" style="font-size: 0.9rem;">
-            @scoreResult.Recommendation
-        </p>
-
-        <button class="btn btn-secondary" @onclick="UploadAndGenerateScore" disabled="@(!fileSelected)">
-            Recalculate
-        </button>
-
     </div>
 }
 
 @code {
     private bool scoreGenerated = false;
-    private RiskScoreResult scoreResult = new();
+    private PatientScoreResult scoreResult = new();
     private IBrowserFile? uploadedFile;
     private bool fileSelected => uploadedFile != null;
+    private MemoryStream? cachedFileStream;
 
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
         uploadedFile = e.File;
+        cachedFileStream = new MemoryStream();
+        await uploadedFile.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(cachedFileStream);
         scoreGenerated = false;
     }
 
@@ -62,12 +111,24 @@ else
     {
         try
         {
-            if (uploadedFile == null)
+            if (cachedFileStream == null)
                 return;
 
-            // Convert browser file to stream
-            await using var stream = uploadedFile.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024);
-            scoreResult = await ScoreService.GetScoreAsync(stream);
+            // Step 1: reset score temporarily (triggers UI update)
+            scoreResult.Score = 0;
+            scoreResult.Confidence = 0;
+            scoreResult.GenomicInstability = 0;
+            scoreResult.RiskCategory = string.Empty;
+            scoreResult.Recommendation = string.Empty;
+
+            StateHasChanged(); // Force UI to reflect reset state
+
+            // Step 2: wait a short moment for visual effect (optional)
+            await Task.Delay(100); // Optional: for a more visible transition
+
+            // Step 3: reload and process file
+            cachedFileStream.Position = 0;
+            scoreResult = await ScoreService.GetScoreAsync(cachedFileStream);
             scoreGenerated = true;
 
             Console.WriteLine($"🔢 Risk Category: {scoreResult.RiskCategory}");

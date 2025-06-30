@@ -22,7 +22,7 @@ public class SequestoneScoreService
         _tumorFeatureService = tumorFeatureService;
     }
     
-    public async Task<RiskScoreResult> GetScoreAsync(Stream tsvFileStream)
+    public async Task<PatientScoreResult> GetScoreAsync(Stream tsvFileStream)
     {
         int score = await RiskScoreCalculator.CalculateRiskCategory(tsvFileStream);
 
@@ -40,7 +40,7 @@ public class SequestoneScoreService
             _ => "Low risk. Continue with standard protocols."
         };
 
-        return new RiskScoreResult
+        return new PatientScoreResult
         {
             Score = score,
             RiskCategory = category,

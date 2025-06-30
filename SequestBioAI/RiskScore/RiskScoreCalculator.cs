@@ -29,26 +29,26 @@ public static class RiskScoreCalculator
                 continue;
 
             if (highRiskMarkers.Contains(feature.Name, StringComparer.OrdinalIgnoreCase))
-                maxScore += 0.2; // High-risk gene
+                maxScore += 0.002; // High-risk gene
             else
-                maxScore += 0.1; // Generic positive gene
+                maxScore += 0.001; // Generic positive gene
             if (feature.IsPositiveMarker)
             {
-                riskScore += highRiskMarkers.Contains(feature.Name, StringComparer.OrdinalIgnoreCase) ? 0.2 : 0.1;
+                riskScore += highRiskMarkers.Contains(feature.Name, StringComparer.OrdinalIgnoreCase) ? 0.002 : 0.001;
             }
         }
 
         // Clinical factors
-        maxScore += 0.2 + 0.25 + 0.3;
+        maxScore += 0.002 + 0.0025 + 0.003;
 
-        if (data.SII > 0.8) riskScore += 0.2;
-        if (data.Ki67 > 60) riskScore += 0.25;
-        if (data.TP53Status?.ToLowerInvariant() == "mut") riskScore += 0.3;
+        if (data.SII > 0.8) riskScore += 0.002;
+        if (data.Ki67 > 60) riskScore += 0.0025;
+        if (data.TP53Status?.ToLowerInvariant() == "mut") riskScore += 0.003;
 
         if (maxScore == 0) return 0;
 
         // normalize between 0 and 100
-        double normalized = (double)riskScore / (maxScore) * 100;
+        double normalized = (double)riskScore; // / (maxScore) * 100;
         return (int)Math.Round(normalized);    }
 
 
