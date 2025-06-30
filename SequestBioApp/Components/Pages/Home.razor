@@ -1,6 +1,7 @@
 ﻿@page "/"
-@using RiskCalculator.Data
+@using RiskCalculator.Result
 @using RiskCalculator.Services.RiskScore
+@using SequestBioAI.Data
 @rendermode InteractiveServer
 @inject SequestoneScoreService ScoreService
 
@@ -11,7 +12,8 @@
     <div class="text-center mt-5">
         <h1 class="display-5 fw-bold">Welcome to <strong>SequestBioUI.App </strong></h1>
         <p class="text-muted fst-italic">No score generated yet. Click the button below to begin.</p>
-        <button class="btn btn-primary btn-lg mt-3" @onclick="GenerateScore">Generate Score</button>
+        <InputFile OnChange="HandleFileSelected" accept=".tsv"  MaxFileSize="10485760" />
+        <button class="btn btn-primary mt-3" @onclick="UploadAndGenerateScore" disabled="@(!fileSelected)">Generate Score</button>
     </div>
 }
 else
@@ -37,71 +39,58 @@ else
             @scoreResult.Recommendation
         </p>
 
-        <div class="text-center mt-4">
-            <button class="btn btn-secondary" @onclick="GenerateScore">Recalculate</button>
-        </div>
+        <button class="btn btn-secondary" @onclick="UploadAndGenerateScore" disabled="@(!fileSelected)">
+            Recalculate
+        </button>
+
     </div>
 }
 
 @code {
     private bool scoreGenerated = false;
     private RiskScoreResult scoreResult = new();
+    private IBrowserFile? uploadedFile;
+    private bool fileSelected => uploadedFile != null;
 
-    protected override void OnInitialized()
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
-        Console.WriteLine("✅ Home.razor loaded.");
-        Console.WriteLine("✅ ScoreService is: " + (ScoreService != null));
+        uploadedFile = e.File;
+        scoreGenerated = false;
     }
 
-    private void GenerateScore()
+    private async Task UploadAndGenerateScore()
     {
         try
         {
-            Console.WriteLine("🟢 GenerateScore() was called.");
+            if (uploadedFile == null)
+                return;
 
-            var patient = new PatientData
-            {
-                PatientId = "demo-001",
-                SII = 0.85,
-                COL1A1 = 80,
-                MMP9 = 77,
-                HIESig = 75,
-                OsteoMetSig = 78,
-                MYC_Amp = true,
-                TP53_Mut = true,
-                TP53Status = "mut",
-                Cholesterol = 220,
-                AdipoSig = 72,
-                TILs = 15,
-                Stage = "IIB",
-                Grade = 3,
-                Ki67 = 72,
-                HasBoneMetastasis = true
-            };
-
-            scoreResult = ScoreService.GetScore(patient);
+            // Convert browser file to stream
+            await using var stream = uploadedFile.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024);
+            scoreResult = await ScoreService.GetScoreAsync(stream);
             scoreGenerated = true;
 
-            Console.WriteLine("🔢 Score generated: " + scoreResult?.Score);
+            Console.WriteLine($"🔢 Risk Category: {scoreResult.RiskCategory}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine("❌ Exception in GenerateScore: " + ex.Message);
+            Console.WriteLine("❌ Exception in UploadAndGenerateScore: " + ex.Message);
         }
     }
 
     private string GetGaugeColor(int score) => score switch
     {
-        <= 40 => "#28a745",     // Green
-        <= 70 => "#fd7e14",     // Orange
-        _ => "#dc3545"          // Red
+        <= 40 => "#28a745",
+        <= 70 => "#fd7e14",
+        _ => "#dc3545"
     };
 
     private string GetCategoryColor(string category) => category switch
     {
-        "Low" => "#28a745",
-        "Intermediate" => "#fd7e14",
-        "High" => "#dc3545",
+        "Low Risk" => "#28a745",
+        "Moderate Risk" => "#fd7e14",
+        "High Risk" => "#dc3545",
         _ => "#000000"
     };
 }
+

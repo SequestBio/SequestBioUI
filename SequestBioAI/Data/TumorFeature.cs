@@ -1,4 +1,4 @@
-namespace RiskCalculator.Data
+namespace SequestBioAI.Data
 {
     public class TumorFeature
     {

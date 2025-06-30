@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SequestBioApp", "SequestBio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiskCalculator", "RiskCalculator\RiskCalculator.csproj", "{95432720-1CEB-4C87-8B35-7E9C3248FA8E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SequestBioAI", "SequestBioAI\SequestBioAI.csproj", "{F2D67BEF-8574-4E91-82E5-D49FF4D53C81}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{95432720-1CEB-4C87-8B35-7E9C3248FA8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95432720-1CEB-4C87-8B35-7E9C3248FA8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95432720-1CEB-4C87-8B35-7E9C3248FA8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2D67BEF-8574-4E91-82E5-D49FF4D53C81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2D67BEF-8574-4E91-82E5-D49FF4D53C81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2D67BEF-8574-4E91-82E5-D49FF4D53C81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2D67BEF-8574-4E91-82E5-D49FF4D53C81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

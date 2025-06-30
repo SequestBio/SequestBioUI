@@ -11,6 +11,11 @@ builder.Services.AddHttpClient();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddServerSideBlazor()
+    .AddHubOptions(options =>
+    {
+        options.MaximumReceiveMessageSize = 1000 * 1024 * 1024; // 1 GB
+    });
 
 var app = builder.Build();
 
@@ -23,6 +28,10 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 
 app.UseAntiforgery();
