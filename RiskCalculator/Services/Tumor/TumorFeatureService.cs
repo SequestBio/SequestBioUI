@@ -1,7 +1,7 @@
 using System.Text.Json;
-using SequestBio.ScoreComponent.Patient.Data;
+using RiskCalculator.Data;
 
-namespace SequestBio.ScoreComponent.Services.Tumor;
+namespace RiskCalculator.Services.Tumor;
 
 public class TumorFeatureService
 {

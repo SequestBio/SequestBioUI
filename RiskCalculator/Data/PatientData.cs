@@ -1,4 +1,4 @@
-namespace SequestBio.ScoreComponent.Patient.Data;
+namespace RiskCalculator.Data;
 
 public class PatientData
 {

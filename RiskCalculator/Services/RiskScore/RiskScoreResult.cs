@@ -1,7 +1,7 @@
-using SequestBio.ScoreComponent.Patient.Data;
-using SequestBio.ScoreComponent.Services.Tumor;
+using RiskCalculator.Data;
+using RiskCalculator.Services.Tumor;
 
-namespace SequestBio.ScoreComponent.Services.RiskScore;
+namespace RiskCalculator.Services.RiskScore;
 
 /// <summary>
 /// Represents the result of a Sequestone risk score calculation.

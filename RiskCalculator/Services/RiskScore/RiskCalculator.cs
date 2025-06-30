@@ -1,7 +1,6 @@
-using SequestBio.ScoreComponent.Patient.Data;
-using SequestBio.ScoreComponent.Services.RiskScore;
+using RiskCalculator.Data;
 
-namespace SequestBio.SequestBio.ScoreComponent.Services.RiskScore;
+namespace RiskCalculator.Services.RiskScore;
 
 public static class RiskCalculator
 {

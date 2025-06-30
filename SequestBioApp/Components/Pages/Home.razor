@@ -1,0 +1,107 @@
+﻿@page "/"
+@using RiskCalculator.Data
+@using RiskCalculator.Services.RiskScore
+@rendermode InteractiveServer
+@inject SequestoneScoreService ScoreService
+
+<PageTitle>Home</PageTitle>
+
+@if (!scoreGenerated)
+{
+    <div class="text-center mt-5">
+        <h1 class="display-5 fw-bold">Welcome to <strong>SequestBioUI.App </strong></h1>
+        <p class="text-muted fst-italic">No score generated yet. Click the button below to begin.</p>
+        <button class="btn btn-primary btn-lg mt-3" @onclick="GenerateScore">Generate Score</button>
+    </div>
+}
+else
+{
+    <div class="card m-5 p-4 shadow" style="max-width: 450px; margin: auto;">
+        <h5 class="card-title mb-2">Proprietary Risk Score</h5>
+        <h6 class="text-muted mb-4">"Sequestone Score"</h6>
+
+        <RadzenGauge Min="0" Max="100" Value="@scoreResult.Score" 
+                     Style="width: 100%; height: 160px;" 
+                     Color="@GetGaugeColor(scoreResult.Score)" />
+
+        <div class="text-center mt-3">
+            <h3>@scoreResult.Score <small class="text-muted">Score</small></h3>
+            <p class="fw-bold">Risk Category: 
+                <span style="color:@GetCategoryColor(scoreResult.RiskCategory)">
+                    @scoreResult.RiskCategory
+                </span>
+            </p>
+        </div>
+
+        <p class="text-muted mt-2" style="font-size: 0.9rem;">
+            @scoreResult.Recommendation
+        </p>
+
+        <div class="text-center mt-4">
+            <button class="btn btn-secondary" @onclick="GenerateScore">Recalculate</button>
+        </div>
+    </div>
+}
+
+@code {
+    private bool scoreGenerated = false;
+    private RiskScoreResult scoreResult = new();
+
+    protected override void OnInitialized()
+    {
+        Console.WriteLine("✅ Home.razor loaded.");
+        Console.WriteLine("✅ ScoreService is: " + (ScoreService != null));
+    }
+
+    private void GenerateScore()
+    {
+        try
+        {
+            Console.WriteLine("🟢 GenerateScore() was called.");
+
+            var patient = new PatientData
+            {
+                PatientId = "demo-001",
+                SII = 0.85,
+                COL1A1 = 80,
+                MMP9 = 77,
+                HIESig = 75,
+                OsteoMetSig = 78,
+                MYC_Amp = true,
+                TP53_Mut = true,
+                TP53Status = "mut",
+                Cholesterol = 220,
+                AdipoSig = 72,
+                TILs = 15,
+                Stage = "IIB",
+                Grade = 3,
+                Ki67 = 72,
+                HasBoneMetastasis = true
+            };
+
+            scoreResult = ScoreService.GetScore(patient);
+            scoreGenerated = true;
+
+            Console.WriteLine("🔢 Score generated: " + scoreResult?.Score);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("❌ Exception in GenerateScore: " + ex.Message);
+        }
+    }
+
+    private string GetGaugeColor(int score) => score switch
+    {
+        <= 40 => "#28a745",     // Green
+        <= 70 => "#fd7e14",     // Orange
+        _ => "#dc3545"          // Red
+    };
+
+    private string GetCategoryColor(string category) => category switch
+    {
+        "Low" => "#28a745",
+        "Intermediate" => "#fd7e14",
+        "High" => "#dc3545",
+        _ => "#000000"
+    };
+}
