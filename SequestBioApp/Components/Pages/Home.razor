@@ -127,11 +127,72 @@ else
                 </div>
             </div>
         </div>
+        
+        
+        <!-- Insights Row -->
+        <div class="row justify-content-center mt-5 gy-4 align-items-stretch">
+
+    <!-- Key Risk Contributors Card -->
+    <div class="col-md-6">
+        <div class="card p-4 shadow">
+            <h5 class="fw-bold">Key Risk Contributors</h5>
+            <p class="text-muted mb-3">Explainable AI (XAI) Insights - Top Factors Influencing Score</p>
+
+            <!-- Example horizontal bar chart -->
+            <div>
+                @foreach (var item in TopFactors)
+                {
+                    <div class="d-flex justify-content-between">
+                        <span>@item.Name</span>
+                        <span>@item.Contribution</span>
+                    </div>
+                    <div class="progress mb-3" style="height: 14px;">
+                        <div class="progress-bar bg-dark" role="progressbar"
+                             style="width: @(Math.Abs(item.Contribution))%;"
+                             aria-valuenow="@item.Contribution" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="mt-4">
+                <h6 class="fw-bold">Top Factors Summary:</h6>
+                <ul class="list-group list-group-flush">
+                    @foreach (var item in TopFactors)
+                    {
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span class="@(item.Contribution > 0 ? "text-danger" : "text-success")">
+                                @(item.Contribution > 0 ? "↑" : "↓") @item.Name
+                            </span>
+                            <span class="fw-bold">@item.Contribution.ToString("0.00")</span>
+                        </li>
+                    }
+                </ul>
+                <a href="#" class="d-block mt-2 text-muted small">View All Contributing Factors</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Predicted Outcome Probabilities Card -->
+    <div class="col-md-6">
+        <div class="card p-4 shadow">
+            <h5 class="fw-bold">Predicted Outcome Probabilities</h5>
+            <p class="text-muted mb-3">Recurrence-Free Survival (RFS) & Metastasis-Free Survival (MFS)</p>
+
+            <!-- Placeholder for line chart -->
+            <div class="d-flex align-items-center justify-content-center" style="height: 300px;">
+                <img src="chart-placeholder.png" alt="Survival Chart" class="img-fluid w-100" style="max-width: 100%;" />
+            </div>
+
+        </div>
+    </div>
+</div>
     </div>
 }
 
 @code {
     private bool scoreGenerated = true;
+
     private PatientScoreResult scoreResult = new()
     {
         Score = 0,
@@ -140,6 +201,7 @@ else
         RiskCategory = "N/A",
         Recommendation = "Upload a .tsv file to calculate your personalized score."
     };
+
     private IBrowserFile? uploadedFile;
     private bool fileSelected => uploadedFile != null;
     private MemoryStream? cachedFileStream;
@@ -198,5 +260,21 @@ else
         "High Risk" => "#dc3545",
         _ => "#000000"
     };
+
+    public class Factor
+    {
+        public string Name { get; set; } = "";
+        public double Contribution { get; set; }
+    }
+
+    private List<Factor> TopFactors = new()
+    {
+        new Factor { Name = "Gene Sig. A", Contribution = 20 },
+        new Factor { Name = "TMB Score", Contribution = -10 },
+        new Factor { Name = "Stromal Factor X", Contribution = 15 },
+        new Factor { Name = "CD8+ Infiltration", Contribution = -8 },
+        new Factor { Name = "Hypoxia Marker Z", Contribution = 12 }
+    };
+
 }
 
