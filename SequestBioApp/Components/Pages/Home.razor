@@ -19,28 +19,46 @@
 else
 {
     <div class="container mt-5">
+        <!-- NEW: Upload area -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-6 text-center">
+                <InputFile OnChange="HandleFileSelected" accept=".tsv" MaxFileSize="10485760" />
+                <button class="btn btn-primary ms-3" @onclick="UploadAndGenerateScore" disabled="@(!fileSelected)">
+                    Recalculate Score
+                </button>
+            </div>
+        </div>
+
+        <!-- Cards -->
         <div class="row justify-content-center gy-4">
             <!-- Card 1: Sequestone Score -->
             <div class="col-md-4">
-                <div class="card p-4 shadow h-100 d-flex flex-column justify-content-between" style="min-height: 400px;">
+                <div class="card p-4 shadow h-100 d-flex flex-column justify-content-between" style="min-height: 300px;">
                     <div>
-                        <h5 class="card-title mb-2">Proprietary Risk Score</h5>
-                        <h6 class="text-muted mb-4">"Sequestone Score"</h6>
+                        <h5 class="card-title"><span class="highlight">Proprietary Risk Score</span></h5>
+                        <h6 class="text-muted">"Sequestone Score"</h6>
 
-                        <RadzenGauge Min="0" Max="100" Value="@scoreResult.Score"
-                                     Style="width: 100%; height: 160px;"
-                                     Color="@GetGaugeColor(scoreResult.Score)" />
-
-                        <div class="text-center mt-3">
-                            <h3>@scoreResult.Score <small class="text-muted">Score</small></h3>
-                            <p class="fw-bold">Risk Category:
-                                <span style="color:@GetCategoryColor(scoreResult.RiskCategory)">
-                                    @scoreResult.RiskCategory
-                                </span>
-                            </p>
+                        <div class="mt-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>Score</strong>
+                                <span style="color:@GetGaugeColor(scoreResult.Score); font-weight: bold;">@scoreResult.Score%</span>
+                            </div>
+                            <div class="progress" style="height: 16px;">
+                                <div class="progress-bar"
+                                     role="progressbar"
+                                     style="width: @scoreResult.Score%; background-color: @GetGaugeColor(scoreResult.Score);"
+                                     aria-valuenow="@scoreResult.Score" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
                         </div>
 
-                        <p class="text-muted mt-2" style="font-size: 0.9rem;">
+                        <p class="fw-bold mt-3 mb-1">Risk Category:
+                            <span style="color:@GetCategoryColor(scoreResult.RiskCategory)">
+                                @scoreResult.RiskCategory
+                            </span>
+                        </p>
+
+                        <p class="text-muted" style="font-size: 0.9rem;">
                             @scoreResult.Recommendation
                         </p>
                     </div>
@@ -55,36 +73,56 @@ else
 
             <!-- Card 2: AI Confidence Score -->
             <div class="col-md-4">
-                <div class="card p-4 shadow h-100 d-flex flex-column justify-content-between" style="min-height: 400px;">
+                <div class="card p-4 shadow h-100 d-flex flex-column justify-content-between" style="min-height: 300px;">
                     <div>
-                        <h5 class="card-title mb-2">AI Confidence Score</h5>
-                        <h6 class="text-muted mb-4">Model Certainty</h6>
+                        <h5 class="card-title"><span class="highlight">AI Confidence Score</span></h5>
+                        <h6 class="text-muted">Model Certainty</h6>
 
-                        <RadzenGauge Min="0" Max="100" Value="@scoreResult.Confidence"
-                                     Style="width: 100%; height: 160px;" />
-
-                        <div class="text-center mt-3">
-                            <h3>@scoreResult.Confidence <small class="text-muted">%</small></h3>
-                            <p class="text-muted">Indicates certainty based on input data quality.</p>
+                        <div class="mt-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>Confidence</strong>
+                                <span class="fw-bold">@scoreResult.Confidence%</span>
+                            </div>
+                            <div class="progress" style="height: 16px;">
+                                <div class="progress-bar bg-info"
+                                     role="progressbar"
+                                     style="width: @scoreResult.Confidence%;"
+                                     aria-valuenow="@scoreResult.Confidence" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
                         </div>
+
+                        <p class="text-muted mt-3">
+                            Indicates certainty based on input data quality.
+                        </p>
                     </div>
                 </div>
             </div>
 
             <!-- Card 3: Genomic Instability -->
             <div class="col-md-4">
-                <div class="card p-4 shadow h-100 d-flex flex-column justify-content-between" style="min-height: 400px;">
+                <div class="card p-4 shadow h-100 d-flex flex-column justify-content-between" style="min-height: 300px;">
                     <div>
-                        <h5 class="card-title mb-2">Genomic Instability</h5>
-                        <h6 class="text-muted mb-4">Composite Mutation Index</h6>
+                        <h5 class="card-title"><span class="highlight">Genomic Instability</span></h5>
+                        <h6 class="text-muted">Composite Mutation Index</h6>
 
-                        <RadzenGauge Min="0" Max="100" Value="@scoreResult.GenomicInstability"
-                                     Style="width: 100%; height: 160px;" />
-
-                        <div class="text-center mt-3">
-                            <h3>@scoreResult.GenomicInstability <small class="text-muted">%</small></h3>
-                            <p class="text-muted">Estimates mutation burden and cellular heterogeneity.</p>
+                        <div class="mt-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>Instability</strong>
+                                <span class="fw-bold">@scoreResult.GenomicInstability%</span>
+                            </div>
+                            <div class="progress" style="height: 16px;">
+                                <div class="progress-bar bg-warning"
+                                     role="progressbar"
+                                     style="width: @scoreResult.GenomicInstability%;"
+                                     aria-valuenow="@scoreResult.GenomicInstability" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
                         </div>
+
+                        <p class="text-muted mt-3">
+                            Estimates mutation burden and cellular heterogeneity.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -93,8 +131,15 @@ else
 }
 
 @code {
-    private bool scoreGenerated = false;
-    private PatientScoreResult scoreResult = new();
+    private bool scoreGenerated = true;
+    private PatientScoreResult scoreResult = new()
+    {
+        Score = 0,
+        Confidence = 0,
+        GenomicInstability = 0,
+        RiskCategory = "N/A",
+        Recommendation = "Upload a .tsv file to calculate your personalized score."
+    };
     private IBrowserFile? uploadedFile;
     private bool fileSelected => uploadedFile != null;
     private MemoryStream? cachedFileStream;
@@ -104,7 +149,7 @@ else
         uploadedFile = e.File;
         cachedFileStream = new MemoryStream();
         await uploadedFile.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(cachedFileStream);
-        scoreGenerated = false;
+        scoreGenerated = true;
     }
 
     private async Task UploadAndGenerateScore()

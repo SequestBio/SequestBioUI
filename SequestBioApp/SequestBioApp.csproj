@@ -10,4 +10,8 @@
       <ProjectReference Include="..\RiskCalculator\RiskCalculator.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Radzen.Blazor" Version="7.1.3" />
+    </ItemGroup>
+
 </Project>

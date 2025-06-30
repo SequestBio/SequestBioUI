@@ -58,3 +58,25 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+/* Make cards look cleaner */
+.card {
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+}
+
+/* Tighter progress bars */
+.progress {
+    background-color: #f3f4f6;
+    border-radius: 10px;
+}
+
+.progress-bar {
+    font-size: 0.75rem;
+}
+/* Highlighted card title background (like "Proprietary Risk Score") */
+.highlight {
+    background-color: #e6f0ff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+}
