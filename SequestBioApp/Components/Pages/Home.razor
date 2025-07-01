@@ -1,4 +1,6 @@
 ﻿@page "/"
+@using Radzen
+@using Radzen.Blazor
 @using RiskCalculator.Result
 @using RiskCalculator.Services.RiskScore
 @using SequestBioAI.Data
@@ -22,7 +24,7 @@ else
         <!-- NEW: Upload area -->
         <div class="row justify-content-center mb-4">
             <div class="col-md-6 text-center">
-                <InputFile OnChange="HandleFileSelected" accept=".tsv" MaxFileSize="10485760" />
+                <InputFile OnChange="HandleFileSelected" accept=".tsv" MaxFileSize="10485760"/>
                 <button class="btn btn-primary ms-3" @onclick="UploadAndGenerateScore" disabled="@(!fileSelected)">
                     Recalculate Score
                 </button>
@@ -75,20 +77,13 @@ else
             <div class="col-md-4">
                 <div class="card p-4 shadow h-100 d-flex flex-column justify-content-between" style="min-height: 300px;">
                     <div>
-                        <h5 class="card-title"><span class="highlight">AI Confidence Score</span></h5>
+                        <h5 class="card-title"><span class="highlight">Patient Summary</span></h5>
                         <h6 class="text-muted">Model Certainty</h6>
 
                         <div class="mt-3">
                             <div class="d-flex justify-content-between">
                                 <strong>Confidence</strong>
                                 <span class="fw-bold">@scoreResult.Confidence%</span>
-                            </div>
-                            <div class="progress" style="height: 16px;">
-                                <div class="progress-bar bg-info"
-                                     role="progressbar"
-                                     style="width: @scoreResult.Confidence%;"
-                                     aria-valuenow="@scoreResult.Confidence" aria-valuemin="0" aria-valuemax="100">
-                                </div>
                             </div>
                         </div>
 
@@ -99,11 +94,11 @@ else
                 </div>
             </div>
 
-            <!-- Card 3: Genomic Instability -->
+            <!-- Card 3: Tumor Microenvironment (TME) -->
             <div class="col-md-4">
                 <div class="card p-4 shadow h-100 d-flex flex-column justify-content-between" style="min-height: 300px;">
                     <div>
-                        <h5 class="card-title"><span class="highlight">Genomic Instability</span></h5>
+                        <h5 class="card-title"><span class="highlight">Tumor Microenvironment (TME)</span></h5>
                         <h6 class="text-muted">Composite Mutation Index</h6>
 
                         <div class="mt-3">
@@ -127,71 +122,194 @@ else
                 </div>
             </div>
         </div>
-        
-        
+
+
         <!-- Insights Row -->
-        <div class="row justify-content-center mt-5 gy-4 align-items-stretch">
+        <div class="row mt-5 gx-4">
 
-    <!-- Key Risk Contributors Card -->
-    <div class="col-md-6">
-        <div class="card p-4 shadow">
-            <h5 class="fw-bold">Key Risk Contributors</h5>
-            <p class="text-muted mb-3">Explainable AI (XAI) Insights - Top Factors Influencing Score</p>
+            <!-- Key Risk Contributors Card -->
+            <div class="col-md-6">
+                <div class="card p-4 shadow h-100">
+                    <h5 class="fw-bold">Key Risk Contributors</h5>
+                    <p class="text-muted mb-3">Explainable AI (XAI) Insights - Top Factors Influencing Score</p>
 
-            <!-- Example horizontal bar chart -->
-            <div>
-                @foreach (var item in TopFactors)
-                {
-                    <div class="d-flex justify-content-between">
-                        <span>@item.Name</span>
-                        <span>@item.Contribution</span>
+                    <!-- Example horizontal bar chart -->
+                    <div>
+                        @foreach (var item in TopFactors)
+                        {
+                            <div class="d-flex justify-content-between">
+                                <span>@item.Name</span>
+                                <span>@item.Contribution</span>
+                            </div>
+                            <div class="progress mb-3" style="height: 14px;">
+                                <div class="progress-bar bg-dark" role="progressbar"
+                                     style="width: @(Math.Abs(item.Contribution))%;"
+                                     aria-valuenow="@item.Contribution" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                        }
                     </div>
-                    <div class="progress mb-3" style="height: 14px;">
-                        <div class="progress-bar bg-dark" role="progressbar"
-                             style="width: @(Math.Abs(item.Contribution))%;"
-                             aria-valuenow="@item.Contribution" aria-valuemin="0" aria-valuemax="100">
-                        </div>
+
+                    <div class="mt-4">
+                        <h6 class="fw-bold">Top Factors Summary:</h6>
+                        <ul class="list-group list-group-flush">
+                            @foreach (var item in TopFactors)
+                            {
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span class="@(item.Contribution > 0 ? "text-danger" : "text-success")">
+                                        @(item.Contribution > 0 ? "↑" : "↓") @item.Name
+                                    </span>
+                                    <span class="fw-bold">@item.Contribution.ToString("0.00")</span>
+                                </li>
+                            }
+                        </ul>
+                        <a href="#" class="d-block mt-2 text-muted small">View All Contributing Factors</a>
                     </div>
-                }
+                </div>
             </div>
 
-            <div class="mt-4">
-                <h6 class="fw-bold">Top Factors Summary:</h6>
-                <ul class="list-group list-group-flush">
-                    @foreach (var item in TopFactors)
-                    {
-                        <li class="list-group-item d-flex justify-content-between">
-                            <span class="@(item.Contribution > 0 ? "text-danger" : "text-success")">
-                                @(item.Contribution > 0 ? "↑" : "↓") @item.Name
-                            </span>
-                            <span class="fw-bold">@item.Contribution.ToString("0.00")</span>
+            <!-- Predicted Outcome Probabilities Card -->
+            <div class="col-md-6">
+                <div class="card p-4 shadow h-100">
+                    <h5 class="fw-bold">Predicted Outcome Probabilities</h5>
+                    <p class="text-muted mb-3">Recurrence-Free Survival (RFS) & Metastasis-Free Survival (MFS)</p>
+
+                    <RadzenChart Style="height:300px;">
+                        <RadzenCategoryAxis />
+                        <RadzenValueAxis Min="0" Max="1" />
+
+                        <RadzenLineSeries Data="@rfsData"
+                                          CategoryProperty="Year"
+                                          ValueProperty="Probability"
+                                          Title="RFS" />
+
+                        <RadzenLineSeries Data="@mfsData"
+                                          CategoryProperty="Year"
+                                          ValueProperty="Probability"
+                                          Title="MFS" />
+                    </RadzenChart>
+
+                </div>
+            </div>
+        </div>
+        <!-- Additional Cards Row -->
+        <div class="row mt-5 gx-4">
+
+            <!-- Benchmark Comparison Card -->
+            <div class="col-md-6">
+                <div class="card p-4 shadow h-100">
+                    <h5 class="fw-bold">Benchmark Comparison</h5>
+                    <div class="d-flex justify-content-center mb-3">
+                        <RadzenChart Style="height: 260px;">
+                            <RadzenBarSeries Data="@benchmarkData" CategoryProperty="Label" ValueProperty="Value"/>
+                            <RadzenCategoryAxis/>
+                            <RadzenValueAxis Min="0" Max="100" Step="10"/>
+                        </RadzenChart>
+                    </div>
+                    <p class="text-muted">
+                        The Sequestone Score provides a more nuanced risk assessment compared to models based solely on standard clinical factors, by incorporating molecular and TME characteristics.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tabbed Insights Card -->
+            <div class="col-md-6">
+                <div class="card p-4 shadow h-100">
+                    <ul class="nav nav-tabs mb-3">
+                        <li class="nav-item">
+                            <a class="nav-link @(selectedTab == "Pathway" ? "active" : "")"
+                               @onclick="@(() => selectedTab = "Pathway")">Pathway Analysis</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(selectedTab == "Chemo" ? "active" : "")"
+                               @onclick="@(() => selectedTab = "Chemo")">Chemo Response</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(selectedTab == "Immuno" ? "active" : "")"
+                               @onclick="@(() => selectedTab = "Immuno")">Immunotherapy</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(selectedTab == "InVitro" ? "active" : "")"
+                               @onclick="@(() => selectedTab = "InVitro")">In Vitro Assay</a>
+                        </li>
+                    </ul>
+
+                    @if (selectedTab == "Pathway")
+                    {
+                        <div class="bg-light p-3 rounded">
+                            <h6 class="fw-bold">Pathway Activity Scores</h6>
+                            <img src="tab-pathway-placeholder.png" alt="Pathway Activity" class="img-fluid w-100"/>
+                            <p class="text-muted mt-2">Higher scores indicate increased activity in the respective pathways. Colors are for visual distinction.</p>
+                        </div>
                     }
-                </ul>
-                <a href="#" class="d-block mt-2 text-muted small">View All Contributing Factors</a>
+                    else if (selectedTab == "Chemo")
+                    {
+                        <div class="bg-light p-3 rounded">
+                            <h6 class="fw-bold">Chemotherapy Response Prediction</h6>
+                            <table class="table table-sm table-bordered mt-2">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>Chemotherapy Agent</th>
+                                    <th>Predicted Response</th>
+                                    <th>Confidence</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr><td>Cisplatin</td><td>Moderate Sensitivity</td><td>High (75%)</td></tr>
+                                <tr><td>Paclitaxel</td><td>Low Sensitivity</td><td>Medium (55%)</td></tr>
+                                <tr><td>Gemcitabine</td><td>Moderate Sensitivity</td><td>High (80%)</td></tr>
+                                <tr><td>Pemetrexed</td><td>High Sensitivity</td><td>High (85%)</td></tr>
+                                </tbody>
+                            </table>
+                            <p class="text-muted small">NCCN Guideline Link: <a href="#">View Relevant NCCN Guidelines</a></p>
+                        </div>
+                    }
+                    else if (selectedTab == "Immuno")
+                    {
+                        <div class="bg-light p-3 rounded">
+                            <h6 class="fw-bold">Immunotherapy Response Prediction</h6>
+                            <p><strong>Predicted Immunotherapy Response:</strong> Likely Responder (Score: 0.72)</p>
+                            <p><strong>Key Biomarkers for IO:</strong> PD-L1 TPS: 5%; TMB: 12 muts/Mb; TILs: 15% (CD8+); MSI Status: Stable</p>
+                            <p class="text-muted small">Note: Immunotherapy response is complex and influenced by multiple factors. This prediction is based on available biomarker data.</p>
+                        </div>
+                    }
+                    else if (selectedTab == "InVitro")
+                    {
+                        <div class="bg-light p-3 rounded">
+                            <h6 class="fw-bold">Patient-Specific TME Parameters (from RNAseq)</h6>
+                            <p><strong>Collagen Profile (Type/Level):</strong> High Type I Collagen, Moderate Type IV Collagen deposition.</p>
+                            <p><strong class="text-primary">MMP Profile (Type/Level):</strong> Elevated MMP-2 and MMP-9 activity, indicative of tissue remodeling.</p>
+                            <h6 class="fw-bold mt-3">Assay Results (Conceptual)</h6>
+                            <p><strong>Measured Invasiveness Score:</strong> 7.2 / 10</p>
+                            <p class="text-muted">The measured in-vitro invasiveness score of 7.2 suggests significant potential for cell migration and invasion.</p>
+                        </div>
+                    }
+                </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Predicted Outcome Probabilities Card -->
-    <div class="col-md-6">
-        <div class="card p-4 shadow">
-            <h5 class="fw-bold">Predicted Outcome Probabilities</h5>
-            <p class="text-muted mb-3">Recurrence-Free Survival (RFS) & Metastasis-Free Survival (MFS)</p>
-
-            <!-- Placeholder for line chart -->
-            <div class="d-flex align-items-center justify-content-center" style="height: 300px;">
-                <img src="chart-placeholder.png" alt="Survival Chart" class="img-fluid w-100" style="max-width: 100%;" />
-            </div>
 
         </div>
-    </div>
-</div>
     </div>
 }
 
 @code {
     private bool scoreGenerated = true;
+    private string selectedTab = "InVitro";
+    private BarChartOptions barChartOptions;
+    private List<BarChartDataset<int>> barChartDataSets;
+    private List<string> barChartLabels;
+
+    private List<BarPoint> benchmarkData = new()
+    {
+        new BarPoint { Label = "Sequestone Score", Value = 75 },
+        new BarPoint { Label = "Clinical Factors Only", Value = 60 }
+    };
+
+    public class BarPoint
+    {
+        public string Label { get; set; } = "";
+        public double Value { get; set; }
+    }
+
 
     private PatientScoreResult scoreResult = new()
     {
@@ -274,6 +392,32 @@ else
         new Factor { Name = "Stromal Factor X", Contribution = 15 },
         new Factor { Name = "CD8+ Infiltration", Contribution = -8 },
         new Factor { Name = "Hypoxia Marker Z", Contribution = 12 }
+    };
+
+    public class SurvivalPoint
+    {
+        public int Year { get; set; }
+        public double Probability { get; set; }
+    }
+
+    private List<SurvivalPoint> rfsData = new()
+    {
+        new SurvivalPoint { Year = 0, Probability = 1.0 },
+        new SurvivalPoint { Year = 1, Probability = 0.85 },
+        new SurvivalPoint { Year = 2, Probability = 0.75 },
+        new SurvivalPoint { Year = 3, Probability = 0.68 },
+        new SurvivalPoint { Year = 4, Probability = 0.62 },
+        new SurvivalPoint { Year = 5, Probability = 0.58 }
+    };
+
+    private List<SurvivalPoint> mfsData = new()
+    {
+        new SurvivalPoint { Year = 0, Probability = 1.0 },
+        new SurvivalPoint { Year = 1, Probability = 0.88 },
+        new SurvivalPoint { Year = 2, Probability = 0.80 },
+        new SurvivalPoint { Year = 3, Probability = 0.72 },
+        new SurvivalPoint { Year = 4, Probability = 0.65 },
+        new SurvivalPoint { Year = 5, Probability = 0.60 }
     };
 
 }

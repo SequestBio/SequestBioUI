@@ -1,7 +1,11 @@
-using Radzen;
+using Blazorise;
+using Blazorise.Bootstrap5;
+using Blazorise.Charts;
 using RiskCalculator.Services.RiskScore;
 using RiskCalculator.Services.Tumor;
 using SequestBioApp.Components;
+using Radzen;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +22,9 @@ builder.Services.AddServerSideBlazor()
     {
         options.MaximumReceiveMessageSize = 1000 * 1024 * 1024; // 1 GB
     });
+builder.Services
+    .AddBlazorise(options => options.Immediate = true)
+    .AddBootstrap5Providers();
 
 var app = builder.Build();
 
@@ -39,6 +46,7 @@ if (!app.Environment.IsDevelopment())
 app.UseAntiforgery();
 
 app.UseStaticFiles();
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
