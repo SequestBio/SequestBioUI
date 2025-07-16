@@ -18,8 +18,8 @@ public class ProprietaryRiskScoreService : IProprietaryRiskScoreService
 
             var category = score switch
             {
-                >= 10 => "High Risk",
-                >= 6 => "Moderate Risk",
+                > 66 => "High Risk",
+                > 33 => "Moderate Risk",
                 _ => "Low Risk"
             };
 
@@ -33,12 +33,23 @@ public class ProprietaryRiskScoreService : IProprietaryRiskScoreService
             // TODO: Scientists can add more sophisticated confidence calculations here
             var confidence = CalculateConfidence(score, allContributors.Count);
 
+            // Generate residual disease score (temporary random implementation)
+            var residualScore = GenerateResidualDiseaseScore();
+            var residualCategory = residualScore switch
+            {
+                <= 33 => "Low",
+                <= 66 => "Moderate",
+                _ => "High"
+            };
+
             return new ProprietaryRiskScoreModel
             {
                 Score = score,
                 RiskCategory = category,
                 Recommendation = recommendation,
                 Confidence = confidence,
+                ResidualDiseaseScore = residualScore,
+                ResidualDiseaseCategory = residualCategory,
                 IsProcessed = true,
                 CalculatedAt = DateTime.Now
             };
@@ -54,6 +65,8 @@ public class ProprietaryRiskScoreService : IProprietaryRiskScoreService
                 RiskCategory = "Error",
                 Recommendation = "Unable to calculate score due to processing error.",
                 Confidence = 0,
+                ResidualDiseaseScore = 0,
+                ResidualDiseaseCategory = "Error",
                 IsProcessed = false,
                 CalculatedAt = DateTime.Now
             };
@@ -90,5 +103,18 @@ public class ProprietaryRiskScoreService : IProprietaryRiskScoreService
         
         int confidence = baseConfidence + contributorBonus + scoreAdjustment;
         return Math.Clamp(confidence, 0, 100);
+    }
+
+    /// <summary>
+    /// Generate residual disease score (temporary random implementation)
+    /// Scientists: Replace this with actual residual disease calculation
+    /// </summary>
+    /// <returns>Residual disease score (0-100)</returns>
+    private int GenerateResidualDiseaseScore()
+    {
+        // TODO: Scientists - implement actual residual disease calculation
+        // For now, generate a random score between 0-100
+        var random = new Random();
+        return random.Next(0, 101);
     }
 } 

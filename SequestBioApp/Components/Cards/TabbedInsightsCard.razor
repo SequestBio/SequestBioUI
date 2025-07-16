@@ -210,8 +210,6 @@
 
 @code {
     [Parameter] public bool IsLoading { get; set; } = false;
-    [Parameter] public string? PatientId { get; set; }
-    [Parameter] public double? RiskScore { get; set; }
     [Parameter] public TabbedInsightsModel? Model { get; set; }
     
     private TabbedInsightsModel? Data => Model;

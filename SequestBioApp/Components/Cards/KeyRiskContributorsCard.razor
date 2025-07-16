@@ -79,7 +79,7 @@
             @if (Data.AllContributors?.Count > 5)
             {
                 <div class="text-center mt-3">
-                    <button class="btn btn-outline-secondary btn-sm" @onclick="ToggleContributorsView">
+                    <button class="btn btn-outline-secondary btn-sm" @onclick="ToggleContributorView">
                         @if (showAllContributors)
                         {
                             <text><i class="fas fa-compress"></i> Show Less (Top 5 Only)</text>
@@ -143,16 +143,13 @@
 
 @code {
     [Parameter] public bool IsLoading { get; set; } = false;
-    [Parameter] public string? PatientId { get; set; }
-    [Parameter] public double? RiskScore { get; set; }
     [Parameter] public KeyRiskContributorsModel? Model { get; set; }
     
     private KeyRiskContributorsModel? Data => Model;
     private bool showAllContributors = false;
-    
-    private void ToggleContributorsView()
+
+    private void ToggleContributorView()
     {
         showAllContributors = !showAllContributors;
-        StateHasChanged();
     }
 } 

@@ -228,8 +228,8 @@ public static class RiskScoreCalculator
 
     private static string GetRiskCategory(int score) => score switch
     {
-        >= 10 => "High Risk",
-        >= 6 => "Moderate Risk",
+        > 66 => "High Risk",
+        > 33 => "Moderate Risk",
         _ => "Low Risk"
     };
 

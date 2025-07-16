@@ -24,44 +24,64 @@
         }
         else if (Model != null && Model.IsProcessed)
         {
-            <div class="mb-4">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="fw-semibold text-dark">Risk Score</span>
-                    <span class="badge" style="background-color: @GetGaugeColor(Model.Score); color: white;">
-                        @Model.Score%
-                    </span>
-                </div>
-                
-                <div class="progress mb-3" style="height: 20px;">
-                    <div class="progress-bar"
-                         role="progressbar"
-                         style="width: @Model.Score%; background-color: @GetGaugeColor(Model.Score);"
-                         aria-valuenow="@Model.Score" aria-valuemin="0" aria-valuemax="100">
-                    </div>
-                </div>
-                
-                <div class="alert alert-@GetAlertClass(Model.RiskCategory)" role="alert">
-                    <div class="d-flex align-items-center">
-                        <i class="@GetRiskIcon(Model.RiskCategory) me-2"></i>
-                        <div>
-                            <strong>@Model.RiskCategory</strong>
-                            <p class="mb-0 mt-1 small">@Model.Recommendation</p>
+            <div class="text-center flex-grow-1 d-flex flex-column justify-content-center">
+                <div class="row">
+                    <!-- Risk Score Gauge -->
+                    <div class="col-md-6 mb-3">
+                        <div class="gauge-container">
+                            <svg viewBox="0 0 200 120" class="gauge-svg">
+                                <!-- Background arc -->
+                                <path d="M 20 100 A 80 80 0 0 1 180 100" 
+                                      stroke="#e9ecef" 
+                                      stroke-width="20" 
+                                      fill="none" 
+                                      stroke-linecap="round"/>
+                                
+                                <!-- Score arc -->
+                                <path d="M 20 100 A 80 80 0 0 1 180 100" 
+                                      stroke="@GetGaugeColor(Model.Score)" 
+                                      stroke-width="20" 
+                                      fill="none" 
+                                      stroke-linecap="round"
+                                      stroke-dasharray="@GetDashArray(Model.Score)"
+                                      stroke-dashoffset="0"
+                                      class="gauge-progress"/>
+                                
+                                <!-- Score text -->
+                                <text x="100" y="85" text-anchor="middle" class="gauge-score">@Model.Score</text>
+                                <text x="100" y="105" text-anchor="middle" class="gauge-risk">@Model.RiskCategory</text>
+                            </svg>
                         </div>
+                        <div class="gauge-title">Risk Score</div>
                     </div>
-                </div>
-            </div>
 
-            <div class="mt-auto">
-                <div class="row text-center">
-                    <div class="col-6">
-                        <div class="border-end">
-                            <div class="text-muted small">Confidence</div>
-                            <div class="fw-bold text-primary">@Model.Confidence%</div>
+                    <!-- Residual Disease Gauge -->
+                    <div class="col-md-6 mb-3">
+                        <div class="gauge-container">
+                            <svg viewBox="0 0 200 120" class="gauge-svg">
+                                <!-- Background arc -->
+                                <path d="M 20 100 A 80 80 0 0 1 180 100" 
+                                      stroke="#e9ecef" 
+                                      stroke-width="20" 
+                                      fill="none" 
+                                      stroke-linecap="round"/>
+                                
+                                <!-- Score arc -->
+                                <path d="M 20 100 A 80 80 0 0 1 180 100" 
+                                      stroke="@GetGaugeColor(Model.ResidualDiseaseScore)" 
+                                      stroke-width="20" 
+                                      fill="none" 
+                                      stroke-linecap="round"
+                                      stroke-dasharray="@GetDashArray(Model.ResidualDiseaseScore)"
+                                      stroke-dashoffset="0"
+                                      class="gauge-progress"/>
+                                
+                                <!-- Score text -->
+                                <text x="100" y="85" text-anchor="middle" class="gauge-score">@Model.ResidualDiseaseScore</text>
+                                <text x="100" y="105" text-anchor="middle" class="gauge-risk">@Model.ResidualDiseaseCategory</text>
+                            </svg>
                         </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="text-muted small">Calculated</div>
-                        <div class="fw-bold text-secondary">@Model.CalculatedAt.ToString("HH:mm")</div>
+                        <div class="gauge-title">Residual Disease</div>
                     </div>
                 </div>
             </div>
@@ -79,35 +99,72 @@
     </div>
 </div>
 
+<style>
+    .gauge-container {
+        max-width: 250px;
+        margin: 0 auto;
+    }
+    
+    .gauge-svg {
+        width: 100%;
+        height: auto;
+    }
+    
+    .gauge-progress {
+        transition: stroke-dasharray 0.3s ease;
+    }
+    
+    .gauge-score {
+        font-size: 24px;
+        font-weight: bold;
+        fill: #2563eb;
+    }
+    
+    .gauge-risk {
+        font-size: 12px;
+        font-weight: 600;
+        fill: #64748b;
+    }
+
+    .gauge-title {
+        text-align: center;
+        font-weight: 600;
+        color: #64748b;
+        margin-top: 10px;
+        font-size: 14px;
+    }
+
+    @@media (max-width: 768px) {
+        .gauge-container {
+            max-width: 200px;
+        }
+        
+        .gauge-score {
+            font-size: 20px;
+        }
+        
+        .gauge-risk {
+            font-size: 10px;
+        }
+    }
+</style>
+
 @code {
     [Parameter] public ProprietaryRiskScoreModel? Model { get; set; }
-    [Parameter] public bool CanRecalculate { get; set; } = false;
-    [Parameter] public bool IsCalculating { get; set; } = false;
     [Parameter] public bool IsLoading { get; set; } = false;
-    [Parameter] public string? PatientId { get; set; }
-    [Parameter] public double? RiskScore { get; set; }
-    [Parameter] public EventCallback OnRecalculateClick { get; set; }
 
     private string GetGaugeColor(int score) => score switch
     {
-        <= 40 => "#28a745",
-        <= 70 => "#fd7e14",
-        _ => "#dc3545"
+        <= 33 => "#57ec7f", // Green for low risk
+        <= 66 => "#ff9500", // Orange for moderate risk
+        _ => "#de5353"      // Red for high risk
     };
 
-    private string GetAlertClass(string category) => category switch
+    private string GetDashArray(int score)
     {
-        "Low Risk" => "success",
-        "Moderate Risk" => "warning",
-        "High Risk" => "danger",
-        _ => "secondary"
-    };
-
-    private string GetRiskIcon(string category) => category switch
-    {
-        "Low Risk" => "fas fa-check-circle",
-        "Moderate Risk" => "fas fa-exclamation-triangle",
-        "High Risk" => "fas fa-exclamation-circle",
-        _ => "fas fa-question-circle"
-    };
+        // Half circle circumference is approximately 251.33 (π * 80)
+        double circumference = Math.PI * 80;
+        double progress = (score / 100.0) * circumference;
+        return $"{progress} {circumference}";
+    }
 } 

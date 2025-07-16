@@ -9,72 +9,59 @@
         </h5>
     </div>
     <div class="card-body">
-        <h6 class="text-muted">Hot vs Cold Tumor Classification</h6>
+        <h6 class="text-muted mb-4">Hot vs Cold Tumor Classification</h6>
 
         @if (Model != null && Model.IsAnalysisComplete)
         {
-            <div class="mt-3">
-                <div class="d-flex justify-content-between">
-                    <strong>Cold</strong>
-                    <span class="fw-bold">@Model.ImmuneStatus</span>
-                    <strong>Hot</strong>
+            <div class="text-center">
+                <!-- Gauge Container -->
+                <div class="immune-gauge-container">
+                    <svg viewBox="0 0 300 220" class="immune-gauge-svg">
+                        <!-- Gradient Definition -->
+                        <defs>
+                            <linearGradient id="immuneGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#87ceeb;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#ffd700;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#ff6b6b;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Background arc -->
+                        <path d="M 50 150 A 100 100 0 0 1 250 150" 
+                              stroke="#e9ecef" 
+                              stroke-width="20" 
+                              fill="none" 
+                              stroke-linecap="round"/>
+                        
+                        <!-- Gradient arc -->
+                        <path d="M 50 150 A 100 100 0 0 1 250 150" 
+                              stroke="url(#immuneGradient)" 
+                              stroke-width="20" 
+                              fill="none" 
+                              stroke-linecap="round"/>
+                        
+                        <!-- Pointer -->
+                        <g transform="rotate(@GetPointerRotation(Model.TumorHotColdScore) 150 150)">
+                            <line x1="150" y1="150" x2="150" y2="70" 
+                                  stroke="#2c3e50" 
+                                  stroke-width="4" 
+                                  stroke-linecap="round"/>
+                            <circle cx="150" cy="150" r="10" fill="#2c3e50"/>
+                            <polygon points="150,65 156,76 144,76" fill="#2c3e50"/>
+                        </g>
+                        
+                        <!-- Labels -->
+                        <text x="70" y="170" text-anchor="middle" class="gauge-label">Cold</text>
+                        <text x="230" y="170" text-anchor="middle" class="gauge-label">Hot</text>
+                        
+                        <!-- Score display -->
+                        <text x="150" y="200" text-anchor="middle" class="gauge-score">@Model.TumorHotColdScore%</text>
+                    </svg>
                 </div>
-                <div class="progress" style="height: 20px;">
-                    <div class="progress-bar @GetTumorStatusColor(Model.TumorHotColdScore)"
-                         role="progressbar"
-                         style="width: @Model.TumorHotColdScore%;"
-                         aria-valuenow="@Model.TumorHotColdScore" aria-valuemin="0" aria-valuemax="100">
-                        @Model.TumorHotColdScore%
-                    </div>
-                </div>
-            </div>
-
-            <p class="text-muted mt-3" style="font-size: 0.9rem;">
-                @Model.StatusDescription
-            </p>
-
-            <div class="mt-3">
-                <div class="alert alert-info alert-sm py-2">
-                    <small>
-                        <i class="fas fa-info-circle"></i>
-                        <strong>Clinical Implication:</strong> 
-                        @if (Model.TumorHotColdScore >= 70)
-                        {
-                            <text>High immune infiltration suggests potential for immunotherapy response.</text>
-                        }
-                        else if (Model.TumorHotColdScore >= 40)
-                        {
-                            <text>Moderate immune activity - consider combination approaches.</text>
-                        }
-                        else
-                        {
-                            <text>Low immune infiltration - may benefit from immune-activating strategies.</text>
-                        }
-                    </small>
-                </div>
-            </div>
-
-            <div class="mt-2">
-                <small class="text-muted">
-                    Analysis completed: @Model.CalculatedAt.ToString("HH:mm")
-                </small>
             </div>
         }
         else
         {
-            <div class="mt-3">
-                <div class="d-flex justify-content-between">
-                    <strong>Cold</strong>
-                    <span class="fw-bold">--</span>
-                    <strong>Hot</strong>
-                </div>
-                <div class="progress" style="height: 20px;">
-                    <div class="progress-bar bg-secondary" role="progressbar" style="width: 0%">
-                        --
-                    </div>
-                </div>
-            </div>
-
             <div class="text-center py-4">
                 <i class="fas fa-fire fa-2x text-muted mb-2"></i>
                 <p class="text-muted">
@@ -82,28 +69,56 @@
                 </p>
             </div>
         }
-
-        @if (Model != null && !Model.IsAnalysisComplete && Model.CalculatedAt != DateTime.MinValue)
-        {
-            <div class="text-center mt-2">
-                <small class="text-danger">
-                    <i class="fas fa-exclamation-triangle"></i> Analysis failed
-                </small>
-            </div>
-        }
     </div>
 </div>
+
+<style>
+    .immune-gauge-container {
+        max-width: 300px;
+        margin: 0 auto;
+        padding: 20px 0;
+    }
+    
+    .immune-gauge-svg {
+        width: 100%;
+        height: auto;
+    }
+    
+    .gauge-label {
+        font-size: 16px;
+        font-weight: 600;
+        fill: #64748b;
+    }
+    
+    .gauge-score {
+        font-size: 24px;
+        font-weight: bold;
+        fill: #2c3e50;
+    }
+    
+    @@media (max-width: 768px) {
+        .immune-gauge-container {
+            max-width: 250px;
+        }
+        
+        .gauge-score {
+            font-size: 20px;
+        }
+        
+        .gauge-label {
+            font-size: 14px;
+        }
+    }
+</style>
 
 @code {
     [Parameter] public TumorImmuneStatusModel? Model { get; set; }
     [Parameter] public bool IsLoading { get; set; } = false;
-    [Parameter] public string? PatientId { get; set; }
-    [Parameter] public double? RiskScore { get; set; }
 
-    private string GetTumorStatusColor(int score) => score switch
+    private double GetPointerRotation(int score)
     {
-        <= 30 => "bg-primary",  // Cold - Blue
-        <= 70 => "bg-warning",  // Moderate - Yellow/Orange
-        _ => "bg-danger"        // Hot - Red
-    };
+        // Convert 0-100 score to -90 to +90 degrees rotation
+        // 0 = -90 degrees (Cold), 50 = 0 degrees (center), 100 = +90 degrees (Hot)
+        return (score - 50) * 1.8; // 1.8 = 180/100 for full semicircle range
+    }
 } 

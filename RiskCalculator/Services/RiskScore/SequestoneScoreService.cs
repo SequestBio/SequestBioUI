@@ -39,8 +39,8 @@ public class SequestoneScoreService
 
             var category = score switch
             {
-                >= 10 => "High Risk",
-                >= 6 => "Moderate Risk",
+                > 66 => "High Risk",
+                > 33 => "Moderate Risk",
                 _ => "Low Risk"
             };
 
@@ -54,12 +54,23 @@ public class SequestoneScoreService
             // Calculate confidence based on contributing factors
             var confidence = CalculateConfidence(score, allContributors.Count);
 
+            // Generate residual disease score (temporary random implementation)
+            var residualScore = GenerateResidualDiseaseScore();
+            var residualCategory = residualScore switch
+            {
+                <= 33 => "Low",
+                <= 66 => "Moderate",
+                _ => "High"
+            };
+
             var result = new ProprietaryRiskScoreModel
             {
                 Score = score,
                 RiskCategory = category,
                 Recommendation = recommendation,
                 Confidence = confidence,
+                ResidualDiseaseScore = residualScore,
+                ResidualDiseaseCategory = residualCategory,
                 IsProcessed = true,
                 CalculatedAt = DateTime.Now
             };
@@ -81,6 +92,8 @@ public class SequestoneScoreService
                 RiskCategory = "Error",
                 Recommendation = "Error calculating risk score. Please try again.",
                 Confidence = 0,
+                ResidualDiseaseScore = 0,
+                ResidualDiseaseCategory = "Error",
                 IsProcessed = false,
                 CalculatedAt = DateTime.Now
             };
@@ -106,5 +119,18 @@ public class SequestoneScoreService
         var contributorConfidence = Math.Min(10, contributorCount / 5); // More contributors = more confidence
         
         return Math.Min(95, baseConfidence + scoreConfidence + contributorConfidence);
+    }
+
+    /// <summary>
+    /// Generate residual disease score (temporary random implementation)
+    /// Scientists: Replace this with actual residual disease calculation
+    /// </summary>
+    /// <returns>Residual disease score (0-100)</returns>
+    private int GenerateResidualDiseaseScore()
+    {
+        // TODO: Scientists - implement actual residual disease calculation
+        // For now, generate a random score between 0-100
+        var random = new Random();
+        return random.Next(0, 101);
     }
 }

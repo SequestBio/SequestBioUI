@@ -36,4 +36,14 @@ public class ProprietaryRiskScoreModel
     /// Whether the file was successfully processed
     /// </summary>
     public bool IsProcessed { get; set; }
+
+    /// <summary>
+    /// Residual disease score (0-100)
+    /// </summary>
+    public int ResidualDiseaseScore { get; set; }
+
+    /// <summary>
+    /// Residual disease category (Low, Moderate, High)
+    /// </summary>
+    public string ResidualDiseaseCategory { get; set; } = string.Empty;
 } 

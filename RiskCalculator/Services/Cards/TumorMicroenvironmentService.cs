@@ -1,11 +1,10 @@
 using RiskCalculator.Models.Cards;
 using SequestBioAI.Data;
-using SequestBioAI.RiskScore;
 
 namespace RiskCalculator.Services.Cards;
 
 /// <summary>
-/// Service for analyzing tumor microenvironment (Scientists: Modify TME calculations here)
+/// Service for analyzing tumor microenvironment (Scientists: Replace with real TME calculations)
 /// </summary>
 public class TumorMicroenvironmentService : ITumorMicroenvironmentService
 {
@@ -15,24 +14,18 @@ public class TumorMicroenvironmentService : ITumorMicroenvironmentService
     {
         try
         {
-            // Calculate each component of the TME analysis
-            var genomicInstability = await CalculateGenomicInstabilityAsync(tsvFileStream);
-            var tilLevel = await CalculateTILLevelAsync(tsvFileStream);
-            var mutationBurden = await CalculateMutationBurdenAsync(tsvFileStream);
-            var immuneInfiltration = await CalculateImmuneInfiltrationAsync(tsvFileStream);
-
-            // Additional TME metrics
-            var cellularHeterogeneity = await CalculateCellularHeterogeneityAsync(tsvFileStream);
-            var stromalContent = await CalculateStromalContentAsync(tsvFileStream);
-
+            // TODO: Scientists - Replace this entire method with real TME analysis
+            // For now, return mock data directly
+            await Task.Delay(1); // Simulate processing time
+            
             return new TumorMicroenvironmentModel
             {
-                GenomicInstability = genomicInstability,
-                TILLevel = tilLevel,
-                MutationBurden = mutationBurden,
-                CellularHeterogeneity = cellularHeterogeneity,
-                ImmuneInfiltration = immuneInfiltration,
-                StromalContent = stromalContent,
+                GenomicInstability = _random.Next(20, 80),
+                TILLevel = _random.Next(25, 75),
+                MutationBurden = _random.NextDouble() * 10 + 5, // 5-15 mutations per megabase
+                CellularHeterogeneity = _random.NextDouble() * 0.7 + 0.2, // 0.2-0.9 heterogeneity index
+                ImmuneInfiltration = _random.NextDouble() * 0.8 + 0.1, // 0.1-0.9 immune infiltration score
+                StromalContent = _random.NextDouble() * 60 + 20, // 20-80% stromal content
                 IsAnalysisComplete = true,
                 CalculatedAt = DateTime.Now
             };
@@ -53,75 +46,5 @@ public class TumorMicroenvironmentService : ITumorMicroenvironmentService
                 CalculatedAt = DateTime.Now
             };
         }
-    }
-
-    public async Task<int> CalculateGenomicInstabilityAsync(Stream tsvFileStream)
-    {
-        // TODO: Scientists - Implement real genomic instability calculation
-        // This should analyze gene expression patterns related to genomic instability
-        // Examples: DNA repair genes, chromosome instability markers, etc.
-        
-        // Placeholder calculation (remove when real implementation is added)
-        await Task.Delay(1);
-        return _random.Next(20, 80);
-    }
-
-    public async Task<int> CalculateTILLevelAsync(Stream tsvFileStream)
-    {
-        // TODO: Scientists - Implement real TIL level calculation
-        // This should analyze immune infiltration markers from RNA-seq data
-        // Examples: CD3, CD8, CD4, immune signature genes
-        
-        // Placeholder calculation (remove when real implementation is added)
-        await Task.Delay(1);
-        return _random.Next(25, 75);
-    }
-
-    public async Task<double> CalculateMutationBurdenAsync(Stream tsvFileStream)
-    {
-        // TODO: Scientists - Implement real mutation burden calculation
-        // This should analyze expression patterns that correlate with mutation burden
-        // Examples: DNA damage response genes, mismatch repair genes
-        
-        // Placeholder calculation (remove when real implementation is added)
-        await Task.Delay(1);
-        return _random.NextDouble() * 10 + 5; // 5-15 mutations per megabase
-    }
-
-    public async Task<double> CalculateImmuneInfiltrationAsync(Stream tsvFileStream)
-    {
-        // TODO: Scientists - Implement real immune infiltration calculation
-        // This should analyze immune cell type-specific gene signatures
-        // Examples: T-cell, B-cell, NK cell, macrophage signatures
-        
-        // Placeholder calculation (remove when real implementation is added)
-        await Task.Delay(1);
-        return _random.NextDouble() * 0.8 + 0.1; // 0.1-0.9 immune infiltration score
-    }
-
-    /// <summary>
-    /// Calculate cellular heterogeneity index
-    /// Scientists: Implement this method to analyze tumor cell diversity
-    /// </summary>
-    private async Task<double> CalculateCellularHeterogeneityAsync(Stream tsvFileStream)
-    {
-        // TODO: Scientists - Implement real cellular heterogeneity calculation
-        // This should analyze gene expression variance and cell type diversity
-        
-        await Task.Delay(1);
-        return _random.NextDouble() * 0.7 + 0.2; // 0.2-0.9 heterogeneity index
-    }
-
-    /// <summary>
-    /// Calculate stromal content percentage
-    /// Scientists: Implement this method to analyze stromal infiltration
-    /// </summary>
-    private async Task<double> CalculateStromalContentAsync(Stream tsvFileStream)
-    {
-        // TODO: Scientists - Implement real stromal content calculation
-        // This should analyze stromal markers and fibroblast signatures
-        
-        await Task.Delay(1);
-        return _random.NextDouble() * 60 + 20; // 20-80% stromal content
     }
 } 
