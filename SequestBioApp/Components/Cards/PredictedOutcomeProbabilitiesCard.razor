@@ -1,0 +1,78 @@
+@using RiskCalculator.Models.Cards
+@using RiskCalculator.Services.Cards
+
+<div class="card mb-4">
+    <div class="card-header bg-warning text-dark">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-chart-line me-2"></i>
+            Predicted Outcome Probabilities
+        </h5>
+    </div>
+    <div class="card-body">
+        @if (IsLoading)
+        {
+            <div class="text-center">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }
+        else if (Data != null)
+        {
+            <div class="row">
+                <!-- Survival Curves -->
+                <div class="col-md-6">
+                    <h6 class="text-muted">5-Year Recurrence-Free Survival (RFS)</h6>
+                    <div class="chart-container mb-3">
+                        <small class="text-muted">5-year RFS: @((Data.FiveYearSurvival * 100).ToString("F1"))%</small>
+                        <div class="progress mt-2">
+                            <div class="progress-bar bg-success" style="width: @(Data.FiveYearSurvival * 100)%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-muted">10-Year Recurrence-Free Survival (RFS)</h6>
+                    <div class="chart-container mb-3">
+                        <small class="text-muted">10-year RFS: @((Data.TenYearSurvival * 100).ToString("F1"))%</small>
+                        <div class="progress mt-2">
+                            <div class="progress-bar bg-info" style="width: @(Data.TenYearSurvival * 100)%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h6 class="text-muted">Median Survival</h6>
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-secondary me-2">@Data.MedianSurvivalMonths.ToString("F1") months</span>
+                        <span class="text-muted">(Median time to event)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h6 class="text-muted">Confidence Interval (5-year RFS)</h6>
+                    <span class="badge bg-light text-dark">
+                        @((Data.ConfidenceInterval.Lower * 100).ToString("F1"))% - @((Data.ConfidenceInterval.Upper * 100).ToString("F1"))%
+                    </span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                No prediction data available. Please ensure patient data and genomic analysis are complete.
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public bool IsLoading { get; set; } = false;
+    [Parameter] public string? PatientId { get; set; }
+    [Parameter] public double? RiskScore { get; set; }
+    [Parameter] public PredictedOutcomeProbabilitiesModel? Model { get; set; }
+    
+    private PredictedOutcomeProbabilitiesModel? Data => Model;
+} 

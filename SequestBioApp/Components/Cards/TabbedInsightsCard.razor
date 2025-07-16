@@ -1,0 +1,218 @@
+@using RiskCalculator.Models.Cards
+@using RiskCalculator.Services.Cards
+
+<div class="card mb-4">
+    <div class="card-header bg-dark text-white">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-microscope me-2"></i>
+            Advanced Insights
+        </h5>
+    </div>
+    <div class="card-body">
+        @if (IsLoading)
+        {
+            <div class="text-center">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }
+        else if (Data != null)
+        {
+            <!-- Tab Navigation -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pathway-tab" data-bs-toggle="tab" 
+                            data-bs-target="#pathway-pane" type="button" role="tab" 
+                            aria-controls="pathway-pane" aria-selected="true">
+                        <i class="fas fa-sitemap me-1"></i>Pathway Analysis
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="chemo-tab" data-bs-toggle="tab" 
+                            data-bs-target="#chemo-pane" type="button" role="tab" 
+                            aria-controls="chemo-pane" aria-selected="false">
+                        <i class="fas fa-pills me-1"></i>Chemo Response
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="immuno-tab" data-bs-toggle="tab" 
+                            data-bs-target="#immuno-pane" type="button" role="tab" 
+                            aria-controls="immuno-pane" aria-selected="false">
+                        <i class="fas fa-shield-alt me-1"></i>Immunotherapy
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="assay-tab" data-bs-toggle="tab" 
+                            data-bs-target="#assay-pane" type="button" role="tab" 
+                            aria-controls="assay-pane" aria-selected="false">
+                        <i class="fas fa-flask me-1"></i>In Vitro Assay
+                    </button>
+                </li>
+            </ul>
+            
+            <!-- Tab Content -->
+            <div class="tab-content mt-3">
+                <!-- Pathway Analysis Tab -->
+                <div class="tab-pane fade show active" id="pathway-pane" role="tabpanel" aria-labelledby="pathway-tab">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Enriched Pathways</h6>
+                            @foreach (var pathway in Data.PathwayAnalysis.EnrichedPathways)
+                            {
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <strong>@pathway.PathwayName</strong>
+                                        <span class="badge bg-primary">@pathway.EnrichmentScore.ToString("F3")</span>
+                                    </div>
+                                    <small class="text-muted">p-value: @pathway.PValue.ToString("E2")</small>
+                                    <div class="progress mt-1" style="height: 6px;">
+                                        <div class="progress-bar" style="width: @((pathway.EnrichmentScore / Data.PathwayAnalysis.EnrichedPathways.Max(p => p.EnrichmentScore)) * 100)%"></div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Pathway Scores</h6>
+                            <div class="row">
+                                @foreach (var pathwayScore in Data.PathwayAnalysis.PathwayScores)
+                                {
+                                    <div class="col-6 mb-2">
+                                        <span class="badge bg-secondary">@pathwayScore.Key: @pathwayScore.Value.ToString("F2")</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chemo Response Tab -->
+                <div class="tab-pane fade" id="chemo-pane" role="tabpanel" aria-labelledby="chemo-tab">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6 class="text-muted">Drug Response Predictions</h6>
+                            @foreach (var drug in Data.ChemoResponse.ResponsePredictions)
+                            {
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <strong>@drug.Agent</strong>
+                                        <span class="badge @(drug.Confidence > 0.7 ? "bg-success" : drug.Confidence > 0.4 ? "bg-warning" : "bg-danger")">
+                                            @drug.ResponseLevel
+                                        </span>
+                                    </div>
+                                    <small class="text-muted">Confidence: @drug.Confidence.ToString("P0")</small>
+                                    <div class="progress mt-1" style="height: 6px;">
+                                        <div class="progress-bar @(drug.Confidence > 0.7 ? "bg-success" : drug.Confidence > 0.4 ? "bg-warning" : "bg-danger")" 
+                                             style="width: @(drug.Confidence * 100)%"></div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-muted">Recommended Agents</h6>
+                            <ul class="list-unstyled">
+                                @foreach (var agent in Data.ChemoResponse.RecommendedAgents)
+                                {
+                                    <li class="mb-2">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        @agent
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Immunotherapy Tab -->
+                <div class="tab-pane fade" id="immuno-pane" role="tabpanel" aria-labelledby="immuno-tab">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Response Prediction</h6>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>Overall Response</span>
+                                    <span class="badge bg-@(Data.Immunotherapy.ResponseProbability > 0.6 ? "success" : "warning")">
+                                        @(Data.Immunotherapy.ResponseProbability.ToString("P0"))
+                                    </span>
+                                </div>
+                                <div class="progress mt-1" style="height: 6px;">
+                                    <div class="progress-bar bg-@(Data.Immunotherapy.ResponseProbability > 0.6 ? "success" : "warning")" 
+                                         style="width: @(Data.Immunotherapy.ResponseProbability * 100)%"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <span class="badge bg-info">@Data.Immunotherapy.ResponseCategory</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Key Biomarkers</h6>
+                            <div class="row">
+                                @foreach (var biomarker in Data.Immunotherapy.KeyBiomarkers)
+                                {
+                                    <div class="col-12 mb-2">
+                                        <div class="d-flex justify-content-between">
+                                            <span>@biomarker.Key</span>
+                                            <span class="badge bg-info">@biomarker.Value</span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- In Vitro Assay Tab -->
+                <div class="tab-pane fade" id="assay-pane" role="tabpanel" aria-labelledby="assay-tab">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6 class="text-muted">Assay Results</h6>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <strong>Invasiveness Score</strong>
+                                    <span class="badge bg-@(Data.InVitroAssay.InvasivenessScore > 0.5 ? "danger" : "success")">
+                                        @Data.InVitroAssay.InvasivenessScore.ToString("F1")
+                                    </span>
+                                </div>
+                                <div class="progress mt-1" style="height: 6px;">
+                                    <div class="progress-bar bg-@(Data.InVitroAssay.InvasivenessScore > 0.5 ? "danger" : "success")" 
+                                         style="width: @(Data.InVitroAssay.InvasivenessScore * 100)%"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <strong>Migration Score</strong>
+                                    <span class="badge bg-warning">@Data.InVitroAssay.MigrationScore.ToString("F1")</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-muted">Collagen Profile</h6>
+                            @foreach (var collagen in Data.InVitroAssay.CollagenProfile)
+                            {
+                                <div class="mb-2">
+                                    <span class="text-muted">@collagen.Key:</span> @collagen.Value
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                No advanced insights available. Complete genomic analysis required.
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public bool IsLoading { get; set; } = false;
+    [Parameter] public string? PatientId { get; set; }
+    [Parameter] public double? RiskScore { get; set; }
+    [Parameter] public TabbedInsightsModel? Model { get; set; }
+    
+    private TabbedInsightsModel? Data => Model;
+} 

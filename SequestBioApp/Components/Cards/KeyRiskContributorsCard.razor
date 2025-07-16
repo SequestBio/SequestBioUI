@@ -1,0 +1,158 @@
+@using RiskCalculator.Models.Cards
+@using RiskCalculator.Services.Cards
+@using SequestBioAI.Data
+
+<div class="card mb-4">
+    <div class="card-header bg-danger text-white">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Key Risk Contributors
+        </h5>
+    </div>
+    <div class="card-body">
+        @if (IsLoading)
+        {
+            <div class="text-center">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }
+        else if (Data != null && Data.TopContributors.Any())
+        {
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold mb-0">@(showAllContributors ? "All" : "Top") Contributing Factors</h6>
+                    <small class="text-muted">@Data.TotalFactorsAnalyzed total analyzed</small>
+                </div>
+            </div>
+
+            <!-- Horizontal bar chart -->
+            <div style="@(showAllContributors ? "max-height: 300px; overflow-y: auto;" : "")">
+                @{
+                    var contributorsToShow = showAllContributors ? Data.AllContributors : Data.TopContributors;
+                }
+                @foreach (var contributor in contributorsToShow)
+                {
+                    <div class="d-flex justify-content-between">
+                        <span>@contributor.Name</span>
+                        <span>@contributor.Contribution.ToString("0.0")%</span>
+                    </div>
+                    <div class="progress mb-3" style="height: 14px;">
+                        <div class="progress-bar @(contributor.Impact == "High Risk" ? "bg-danger" : "bg-success")" 
+                             role="progressbar"
+                             style="width: @(Math.Abs(contributor.Contribution))%;"
+                             aria-valuenow="@Math.Abs(contributor.Contribution)" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Detailed list -->
+            <div class="mt-4">
+                <h6 class="fw-bold">@(showAllContributors ? "All" : "Top") Factors Summary:</h6>
+                <div style="@(showAllContributors ? "max-height: 200px; overflow-y: auto;" : "")">
+                    <ul class="list-group list-group-flush">
+                        @{
+                            var contributorsToShow2 = showAllContributors ? Data.AllContributors : Data.TopContributors;
+                        }
+                        @foreach (var contributor in contributorsToShow2)
+                        {
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span class="@(contributor.Impact == "High Risk" ? "text-danger" : "text-success")">
+                                    @(contributor.Impact == "High Risk" ? "↑" : "↓") @contributor.Name
+                                    @if (contributor.ExpressionLevel > 0)
+                                    {
+                                        <small class="text-muted">(TPM: @contributor.ExpressionLevel.ToString("0.0"))</small>
+                                    }
+                                </span>
+                                <span class="fw-bold">@contributor.Contribution.ToString("0.00")%</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Toggle view button -->
+            @if (Data.AllContributors?.Count > 5)
+            {
+                <div class="text-center mt-3">
+                    <button class="btn btn-outline-secondary btn-sm" @onclick="ToggleContributorsView">
+                        @if (showAllContributors)
+                        {
+                            <text><i class="fas fa-compress"></i> Show Less (Top 5 Only)</text>
+                        }
+                        else
+                        {
+                            <text><i class="fas fa-expand"></i> View All Contributors (@Data.AllContributors.Count total)</text>
+                        }
+                    </button>
+                </div>
+            }
+
+            <!-- Risk vs Protective Balance -->
+            @if (Data.RiskFactors.Any() || Data.ProtectiveFactors.Any())
+            {
+                <div class="mt-4">
+                    <h6 class="fw-bold">Risk vs Protective Balance</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-danger">Risk-Increasing Factors (@Data.RiskFactors.Count)</h6>
+                            @foreach (var factor in Data.RiskFactors.Take(3))
+                            {
+                                <div class="mb-1">
+                                    <span class="badge bg-danger">@factor.Name</span>
+                                    <small class="text-muted ms-2">@factor.Contribution.ToString("0.0")%</small>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-success">Protective Factors (@Data.ProtectiveFactors.Count)</h6>
+                            @foreach (var factor in Data.ProtectiveFactors.Take(3))
+                            {
+                                <div class="mb-1">
+                                    <span class="badge bg-success">@factor.Name</span>
+                                    <small class="text-muted ms-2">@factor.Contribution.ToString("0.0")%</small>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Summary -->
+            @if (!string.IsNullOrEmpty(Data.ContributorSummary))
+            {
+                <div class="mt-4">
+                    <h6 class="fw-bold">Key Insights</h6>
+                    <p class="text-muted">@Data.ContributorSummary</p>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                No contributing factors identified. Upload genomic data to see gene contributions.
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public bool IsLoading { get; set; } = false;
+    [Parameter] public string? PatientId { get; set; }
+    [Parameter] public double? RiskScore { get; set; }
+    [Parameter] public KeyRiskContributorsModel? Model { get; set; }
+    
+    private KeyRiskContributorsModel? Data => Model;
+    private bool showAllContributors = false;
+    
+    private void ToggleContributorsView()
+    {
+        showAllContributors = !showAllContributors;
+        StateHasChanged();
+    }
+} 

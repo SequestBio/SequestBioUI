@@ -1,0 +1,129 @@
+@using RiskCalculator.Models.Cards
+@using RiskCalculator.Services.Cards
+
+<div class="card p-4 shadow h-100 d-flex flex-column justify-content-between" style="min-height: 300px;">
+    <div>
+        <h5 class="card-title"><span class="highlight">Tumor Microenvironment (TME)</span></h5>
+        <h6 class="text-muted">Composite Mutation Index</h6>
+
+            @if (Model != null && Model.IsAnalysisComplete)
+            {
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between">
+                        <strong>Instability</strong>
+                        <span class="fw-bold">@Model.GenomicInstability%</span>
+                    </div>
+                    <div class="progress" style="height: 16px;">
+                        <div class="progress-bar bg-warning"
+                             role="progressbar"
+                             style="width: @Model.GenomicInstability%;"
+                             aria-valuenow="@Model.GenomicInstability" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between">
+                        <strong>TIL</strong>
+                        <span class="fw-bold">@Model.TILLevel%</span>
+                    </div>
+                    <div class="progress" style="height: 16px;">
+                        <div class="progress-bar bg-info"
+                             role="progressbar"
+                             style="width: @Model.TILLevel%;"
+                             aria-valuenow="@Model.TILLevel" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">
+                                <strong>Mutation Burden:</strong><br/>
+                                @Model.MutationBurden.ToString("F1") muts/Mb
+                            </small>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">
+                                <strong>Immune Infiltration:</strong><br/>
+                                @Model.ImmuneInfiltration.ToString("F2")
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">
+                                <strong>Heterogeneity:</strong><br/>
+                                @Model.CellularHeterogeneity.ToString("F2")
+                            </small>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">
+                                <strong>Stromal Content:</strong><br/>
+                                @Model.StromalContent.ToString("F1")%
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-muted mt-3" style="font-size: 0.85rem;">
+                    Estimates mutation burden, cellular heterogeneity, and immune infiltration based on gene expression patterns.
+                </p>
+
+                <div class="mt-2">
+                    <small class="text-muted">
+                        Analysis completed: @Model.CalculatedAt.ToString("HH:mm")
+                    </small>
+                </div>
+            }
+            else
+            {
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between">
+                        <strong>Instability</strong>
+                        <span class="fw-bold">--</span>
+                    </div>
+                    <div class="progress" style="height: 16px;">
+                        <div class="progress-bar bg-secondary" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between">
+                        <strong>TIL</strong>
+                        <span class="fw-bold">--</span>
+                    </div>
+                    <div class="progress" style="height: 16px;">
+                        <div class="progress-bar bg-secondary" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="text-center py-4">
+                    <i class="fas fa-dna fa-2x text-muted mb-2"></i>
+                    <p class="text-muted">
+                        Upload RNAseq data to analyze tumor microenvironment.
+                    </p>
+                </div>
+            }
+        </div>
+
+        @if (Model != null && !Model.IsAnalysisComplete && Model.CalculatedAt != DateTime.MinValue)
+        {
+            <div class="text-center mt-2">
+                <small class="text-danger">
+                    <i class="fas fa-exclamation-triangle"></i> Analysis failed
+                </small>
+            </div>
+        }
+    </div>
+
+@code {
+    [Parameter] public TumorMicroenvironmentModel? Model { get; set; }
+    [Parameter] public bool IsLoading { get; set; } = false;
+    [Parameter] public string? PatientId { get; set; }
+    [Parameter] public double? RiskScore { get; set; }
+} 

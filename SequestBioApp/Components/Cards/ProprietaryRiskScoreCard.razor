@@ -1,0 +1,98 @@
+@using RiskCalculator.Models.Cards
+@using RiskCalculator.Services.Cards
+
+<div class="card p-4 shadow h-100 d-flex flex-column justify-content-between" style="min-height: 300px;">
+    <div>
+        <h5 class="card-title"><span class="highlight">Proprietary Risk Score</span></h5>
+        <h6 class="text-muted">"Sequestone Score"</h6>
+
+            @if (Model != null && Model.IsProcessed)
+            {
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between">
+                        <strong>Score</strong>
+                        <span style="color:@GetGaugeColor(Model.Score); font-weight: bold;">@Model.Score%</span>
+                    </div>
+                    <div class="progress" style="height: 16px;">
+                        <div class="progress-bar"
+                             role="progressbar"
+                             style="width: @Model.Score%; background-color: @GetGaugeColor(Model.Score);"
+                             aria-valuenow="@Model.Score" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+
+                <p class="fw-bold mt-3 mb-1">Risk Category:
+                    <span style="color:@GetCategoryColor(Model.RiskCategory)">
+                        @Model.RiskCategory
+                    </span>
+                </p>
+
+                <p class="text-muted" style="font-size: 0.9rem;">
+                    @Model.Recommendation
+                </p>
+
+                <div class="mt-2">
+                    <small class="text-muted">
+                        Confidence: @Model.Confidence% | 
+                        Calculated: @Model.CalculatedAt.ToString("HH:mm")
+                    </small>
+                </div>
+            }
+            else
+            {
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between">
+                        <strong>Score</strong>
+                        <span class="fw-bold">--</span>
+                    </div>
+                    <div class="progress" style="height: 16px;">
+                        <div class="progress-bar bg-secondary" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <p class="text-muted mt-3">
+                    Upload RNAseq data to calculate your personalized risk score.
+                </p>
+            }
+        </div>
+
+        <div class="text-center mt-3">
+            <button class="btn btn-secondary" @onclick="OnRecalculateClick" disabled="@(!CanRecalculate)">
+                @if (IsCalculating)
+                {
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                    <text>Calculating...</text>
+                }
+                else
+                {
+                    <text>Recalculate</text>
+                }
+            </button>
+        </div>
+    </div>
+
+@code {
+    [Parameter] public ProprietaryRiskScoreModel? Model { get; set; }
+    [Parameter] public bool CanRecalculate { get; set; } = false;
+    [Parameter] public bool IsCalculating { get; set; } = false;
+    [Parameter] public bool IsLoading { get; set; } = false;
+    [Parameter] public string? PatientId { get; set; }
+    [Parameter] public double? RiskScore { get; set; }
+    [Parameter] public EventCallback OnRecalculateClick { get; set; }
+
+    private string GetGaugeColor(int score) => score switch
+    {
+        <= 40 => "#28a745",
+        <= 70 => "#fd7e14",
+        _ => "#dc3545"
+    };
+
+    private string GetCategoryColor(string category) => category switch
+    {
+        "Low Risk" => "#28a745",
+        "Moderate Risk" => "#fd7e14",
+        "High Risk" => "#dc3545",
+        _ => "#000000"
+    };
+} 

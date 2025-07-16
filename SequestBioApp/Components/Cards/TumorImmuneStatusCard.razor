@@ -1,0 +1,124 @@
+@using RiskCalculator.Models.Cards
+@using RiskCalculator.Services.Cards
+
+<div class="card p-4 shadow h-100 d-flex flex-column justify-content-between" style="min-height: 300px;">
+    <div>
+        <h5 class="card-title"><span class="highlight">Tumor Immune Status</span></h5>
+        <h6 class="text-muted">Hot vs Cold Tumor Classification</h6>
+
+                @if (Model != null && Model.IsAnalysisComplete)
+                {
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between">
+                            <strong>Cold</strong>
+                            <span class="fw-bold">@Model.ImmuneStatus</span>
+                            <strong>Hot</strong>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar @GetTumorStatusColor(Model.TumorHotColdScore)"
+                                 role="progressbar"
+                                 style="width: @Model.TumorHotColdScore%;"
+                                 aria-valuenow="@Model.TumorHotColdScore" aria-valuemin="0" aria-valuemax="100">
+                                @Model.TumorHotColdScore%
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-muted mt-3" style="font-size: 0.9rem;">
+                        @Model.StatusDescription
+                    </p>
+
+                    <div class="mt-3">
+                        <h6 class="fw-bold">Immune Infiltration Details:</h6>
+                        <div class="row">
+                            <div class="col-6">
+                                <small class="text-muted">
+                                    <strong>T-cells:</strong> @Model.TCellInfiltration.ToString("F2")<br/>
+                                    <strong>B-cells:</strong> @Model.BCellInfiltration.ToString("F2")<br/>
+                                    <strong>NK cells:</strong> @Model.NKCellInfiltration.ToString("F2")
+                                </small>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">
+                                    <strong>Macrophages:</strong> @Model.MacrophageInfiltration.ToString("F2")<br/>
+                                    <strong>PD-L1:</strong> @Model.PDL1Expression.ToString("F1") TPM<br/>
+                                    <strong>IFN-γ:</strong> @Model.InterferonGammaSignature.ToString("F1")
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <div class="alert alert-info alert-sm py-2">
+                            <small>
+                                <i class="fas fa-info-circle"></i>
+                                <strong>Clinical Implication:</strong> 
+                                @if (Model.TumorHotColdScore >= 70)
+                                {
+                                    <text>High immune infiltration suggests potential for immunotherapy response.</text>
+                                }
+                                else if (Model.TumorHotColdScore >= 40)
+                                {
+                                    <text>Moderate immune activity - consider combination approaches.</text>
+                                }
+                                else
+                                {
+                                    <text>Low immune infiltration - may benefit from immune-activating strategies.</text>
+                                }
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            Analysis completed: @Model.CalculatedAt.ToString("HH:mm")
+                        </small>
+                    </div>
+                }
+                else
+                {
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between">
+                            <strong>Cold</strong>
+                            <span class="fw-bold">--</span>
+                            <strong>Hot</strong>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-secondary" role="progressbar" style="width: 0%">
+                                --
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center py-4">
+                        <i class="fas fa-fire fa-2x text-muted mb-2"></i>
+                        <p class="text-muted">
+                            Upload RNAseq data to analyze immune status.
+                        </p>
+                    </div>
+                }
+            </div>
+
+            @if (Model != null && !Model.IsAnalysisComplete && Model.CalculatedAt != DateTime.MinValue)
+            {
+                <div class="text-center mt-2">
+                    <small class="text-danger">
+                        <i class="fas fa-exclamation-triangle"></i> Analysis failed
+                    </small>
+                </div>
+            }
+        </div>
+
+@code {
+    [Parameter] public TumorImmuneStatusModel? Model { get; set; }
+    [Parameter] public bool IsLoading { get; set; } = false;
+    [Parameter] public string? PatientId { get; set; }
+    [Parameter] public double? RiskScore { get; set; }
+
+    private string GetTumorStatusColor(int score) => score switch
+    {
+        <= 30 => "bg-primary",  // Cold - Blue
+        <= 70 => "bg-warning",  // Moderate - Yellow/Orange
+        _ => "bg-danger"        // Hot - Red
+    };
+} 
