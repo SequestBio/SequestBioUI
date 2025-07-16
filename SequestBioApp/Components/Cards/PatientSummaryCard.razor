@@ -1,110 +1,115 @@
 @using RiskCalculator.Models.Cards
 @using RiskCalculator.Services.Cards
 
-<div class="card p-4 shadow h-100 d-flex flex-column justify-content-between" style="min-height: 300px;">
-    <div>
-        <h5 class="card-title"><span class="highlight">Patient Summary</span></h5>
+<div class="card">
+    <div class="card-header">
+        <h5>
+            <i class="fas fa-user-md me-2"></i>
+            Patient Summary
+        </h5>
+    </div>
+    <div class="card-body">
         <h6 class="text-muted">Clinical Information</h6>
-
-            @if (Model != null && Model.HasClinicalData)
-            {
-                <div class="mt-3" style="font-size: 0.9rem;">
-                    <div class="row mb-2">
-                        <div class="col-12"><strong>Full Name:</strong> @Model.ClinicalInfo.FullName</div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-12"><strong>Patient ID / MRN:</strong> @Model.ClinicalInfo.PatientId</div>
-                    </div>
-                    @if (Model.ClinicalInfo.DateOfBirth.HasValue)
-                    {
-                        <div class="row mb-2">
-                            <div class="col-12"><strong>Date of Birth:</strong> @Model.ClinicalInfo.DateOfBirth.Value.ToString("yyyy-MM-dd")</div>
-                        </div>
-                    }
-                    <div class="row mb-2">
-                        <div class="col-12"><strong>Report Generation Date:</strong> @Model.ClinicalInfo.ReportGenerationDate.ToString("yyyy-MM-dd")</div>
-                    </div>
-                    
-                    <hr class="my-2">
-                    <h6 class="fw-bold text-primary">Diagnosis Summary:</h6>
-                    
-                    @if (!string.IsNullOrEmpty(Model.ClinicalInfo.CancerType))
-                    {
-                        <div class="row mb-1">
-                            <div class="col-12"><strong>Cancer Type:</strong> @Model.ClinicalInfo.CancerType</div>
-                        </div>
-                    }
-                    @if (!string.IsNullOrEmpty(Model.ClinicalInfo.CancerSubtypeStage))
-                    {
-                        <div class="row mb-1">
-                            <div class="col-12"><strong>Specific Subtype / Stage:</strong> @Model.ClinicalInfo.CancerSubtypeStage</div>
-                        </div>
-                    }
-                    @if (!string.IsNullOrEmpty(Model.ClinicalInfo.BiomarkerStatus))
-                    {
-                        <div class="row mb-1">
-                            <div class="col-12"><strong>Key Biomarker Status:</strong> @Model.ClinicalInfo.BiomarkerStatus</div>
-                        </div>
-                    }
-                    @if (!string.IsNullOrEmpty(Model.ClinicalInfo.PriorTreatments))
-                    {
-                        <div class="row mb-1">
-                            <div class="col-12"><strong>Prior Treatments:</strong> @Model.ClinicalInfo.PriorTreatments</div>
-                        </div>
-                    }
-
-                    @if (Model.IdentifiedRiskFactors.Any())
-                    {
-                        <hr class="my-2">
-                        <h6 class="fw-bold text-warning">Identified Risk Factors:</h6>
-                        <ul class="list-unstyled">
-                            @foreach (var factor in Model.IdentifiedRiskFactors)
-                            {
-                                <li><small class="text-warning">• @factor</small></li>
-                            }
-                        </ul>
-                    }
-
-                    @if (!string.IsNullOrEmpty(Model.ClinicalSummary))
-                    {
-                        <hr class="my-2">
-                        <h6 class="fw-bold text-info">Clinical Summary:</h6>
-                        <p class="small text-muted">@Model.ClinicalSummary</p>
-                    }
-                </div>
-            }
-            else
-            {
-                <div class="mt-3">
-                    <div class="text-center py-4">
-                        <i class="fas fa-user-md fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">
-                            No clinical data available.
-                        </p>
-                        <p class="text-muted small">
-                            Please enter patient information to see summary.
-                        </p>
-                    </div>
-                </div>
-            }
-        </div>
 
         @if (Model != null && Model.HasClinicalData)
         {
-            <div class="text-center mt-2">
-                <small class="text-muted">
-                    @if (!string.IsNullOrEmpty(Model.ClinicalInfo.ReportingPhysician))
-                    {
-                        <text>Physician: @Model.ClinicalInfo.ReportingPhysician</text>
-                    }
-                    @if (!string.IsNullOrEmpty(Model.ClinicalInfo.Institution))
-                    {
-                        <text> | @Model.ClinicalInfo.Institution</text>
-                    }
-                </small>
+            <div class="mt-3" style="font-size: 0.9rem;">
+                <div class="row mb-2">
+                    <div class="col-12"><strong>Full Name:</strong> @Model.ClinicalInfo.FullName</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-12"><strong>Patient ID / MRN:</strong> @Model.ClinicalInfo.PatientId</div>
+                </div>
+                @if (Model.ClinicalInfo.DateOfBirth.HasValue)
+                {
+                    <div class="row mb-2">
+                        <div class="col-12"><strong>Date of Birth:</strong> @Model.ClinicalInfo.DateOfBirth.Value.ToString("yyyy-MM-dd")</div>
+                    </div>
+                }
+                <div class="row mb-2">
+                    <div class="col-12"><strong>Report Generation Date:</strong> @Model.ClinicalInfo.ReportGenerationDate.ToString("yyyy-MM-dd")</div>
+                </div>
+                
+                <hr class="my-2">
+                <h6 class="fw-bold text-primary">Diagnosis Summary:</h6>
+                
+                @if (!string.IsNullOrEmpty(Model.ClinicalInfo.CancerType))
+                {
+                    <div class="row mb-1">
+                        <div class="col-12"><strong>Cancer Type:</strong> @Model.ClinicalInfo.CancerType</div>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.ClinicalInfo.CancerSubtypeStage))
+                {
+                    <div class="row mb-1">
+                        <div class="col-12"><strong>Specific Subtype / Stage:</strong> @Model.ClinicalInfo.CancerSubtypeStage</div>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.ClinicalInfo.BiomarkerStatus))
+                {
+                    <div class="row mb-1">
+                        <div class="col-12"><strong>Key Biomarker Status:</strong> @Model.ClinicalInfo.BiomarkerStatus</div>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.ClinicalInfo.PriorTreatments))
+                {
+                    <div class="row mb-1">
+                        <div class="col-12"><strong>Prior Treatments:</strong> @Model.ClinicalInfo.PriorTreatments</div>
+                    </div>
+                }
+
+                @if (Model.IdentifiedRiskFactors.Any())
+                {
+                    <hr class="my-2">
+                    <h6 class="fw-bold text-warning">Identified Risk Factors:</h6>
+                    <ul class="list-unstyled">
+                        @foreach (var factor in Model.IdentifiedRiskFactors)
+                        {
+                            <li><small class="text-warning">• @factor</small></li>
+                        }
+                    </ul>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.ClinicalSummary))
+                {
+                    <hr class="my-2">
+                    <h6 class="fw-bold text-info">Clinical Summary:</h6>
+                    <p class="small text-muted">@Model.ClinicalSummary</p>
+                }
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.ClinicalInfo.ReportingPhysician) || !string.IsNullOrEmpty(Model.ClinicalInfo.Institution))
+            {
+                <div class="text-center mt-2">
+                    <small class="text-muted">
+                        @if (!string.IsNullOrEmpty(Model.ClinicalInfo.ReportingPhysician))
+                        {
+                            <text>Physician: @Model.ClinicalInfo.ReportingPhysician</text>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.ClinicalInfo.Institution))
+                        {
+                            <text> | @Model.ClinicalInfo.Institution</text>
+                        }
+                    </small>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="mt-3">
+                <div class="text-center py-4">
+                    <i class="fas fa-user-md fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">
+                        No clinical data available.
+                    </p>
+                    <p class="text-muted small">
+                        Please enter patient information to see summary.
+                    </p>
+                </div>
             </div>
         }
     </div>
+</div>
 
 @code {
     [Parameter] public PatientSummaryModel? Model { get; set; }

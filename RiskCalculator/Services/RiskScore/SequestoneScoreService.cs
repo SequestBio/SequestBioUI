@@ -1,4 +1,4 @@
-using RiskCalculator.Result;
+using RiskCalculator.Models.Cards;
 using RiskCalculator.Services.Tumor;
 using SequestBioAI.Data;
 using SequestBioAI.RiskScore;
@@ -14,58 +14,97 @@ public class SequestoneScoreService
     private readonly TumorFeatureService _tumorFeatureService;
     private readonly Random _random = new();
 
-    /// <summary>
-    /// Computes a Sequestone risk score for the specified patient.
-    /// This is currently randomized and should be replaced with real predictive logic.
-    /// </summary>
     public SequestoneScoreService(TumorFeatureService tumorFeatureService)
     {
         _tumorFeatureService = tumorFeatureService;
     }
     
-    public async Task<PatientScoreResult> GetScoreAsync(Stream tsvFileStream, ClinicalData clinicalData)
+    /// <summary>
+    /// Computes a Sequestone risk score for the specified patient.
+    /// Returns the core risk score model for the main risk calculation.
+    /// </summary>
+    public async Task<ProprietaryRiskScoreModel> GetScoreAsync(Stream tsvFileStream, ClinicalData clinicalData)
     {
-        // Calculate risk score and get contributors
-        var (score, topContributors, allContributors) = await RiskScoreCalculator.CalculateRiskWithContributors(tsvFileStream);
-
-        string category = score switch
+        try
         {
-            >= 10 => "High Risk",
-            >= 6 => "Moderate Risk",
-            _ => "Low Risk"
-        };
+            Console.WriteLine("🔍 SequestoneScoreService: Starting score calculation...");
+            Console.WriteLine($"📊 Stream length: {tsvFileStream.Length}, Position: {tsvFileStream.Position}");
+            
+            // Calculate risk score and get contributors
+            var (score, topContributors, allContributors) = await RiskScoreCalculator.CalculateRiskWithContributors(tsvFileStream);
+            
+            Console.WriteLine($"📈 Calculated score: {score}");
+            Console.WriteLine($"🧬 Top contributors: {topContributors.Count}");
+            Console.WriteLine($"🧬 All contributors: {allContributors.Count}");
 
-        string recommendation = category switch
+            var category = score switch
+            {
+                >= 10 => "High Risk",
+                >= 6 => "Moderate Risk",
+                _ => "Low Risk"
+            };
+
+            var recommendation = category switch
+            {
+                "High Risk" => "Initiate aggressive therapy and monitor closely.",
+                "Moderate Risk" => "Consider standard of care with added monitoring.",
+                _ => "Low risk. Continue with standard protocols."
+            };
+
+            // Calculate confidence based on contributing factors
+            var confidence = CalculateConfidence(score, allContributors.Count);
+
+            var result = new ProprietaryRiskScoreModel
+            {
+                Score = score,
+                RiskCategory = category,
+                Recommendation = recommendation,
+                Confidence = confidence,
+                IsProcessed = true,
+                CalculatedAt = DateTime.Now
+            };
+            
+            Console.WriteLine($"✅ SequestoneScoreService: Score calculation completed successfully");
+            Console.WriteLine($"📊 Final result: Score={result.Score}, Category={result.RiskCategory}, Confidence={result.Confidence}");
+            
+            return result;
+        }
+        catch (Exception ex)
         {
-            "High Risk" => "Initiate aggressive therapy and monitor closely.",
-            "Moderate Risk" => "Consider standard of care with added monitoring.",
-            _ => "Low risk. Continue with standard protocols."
-        };
-
-        // Generate mock values for other metrics (these can be replaced with real calculations later)
-        var confidence = _random.Next(70, 95);
-        var genomicInstability = _random.Next(20, 80);
-        var tilLevel = _random.Next(25, 75);
-        var tumorHotColdScore = _random.Next(30, 85);
-
-        return new PatientScoreResult
-        {
-            ClinicalInfo = clinicalData,
-            Score = score,
-            RiskCategory = category,
-            Recommendation = recommendation,
-            Confidence = confidence,
-            GenomicInstability = genomicInstability,
-            TILLevel = tilLevel,
-            TumorHotColdScore = tumorHotColdScore,
-            TopContributors = topContributors,
-            AllContributors = allContributors
-        };
+            Console.WriteLine($"❌ SequestoneScoreService: Error calculating score: {ex.Message}");
+            Console.WriteLine($"❌ Stack trace: {ex.StackTrace}");
+            
+            // Return a default model instead of throwing
+            return new ProprietaryRiskScoreModel
+            {
+                Score = 0,
+                RiskCategory = "Error",
+                Recommendation = "Error calculating risk score. Please try again.",
+                Confidence = 0,
+                IsProcessed = false,
+                CalculatedAt = DateTime.Now
+            };
+        }
     }
 
-    // Keep the old method signature for backward compatibility (optional)
-    public async Task<PatientScoreResult> GetScoreAsync(Stream tsvFileStream)
+    /// <summary>
+    /// Backward compatibility method - delegates to main method
+    /// </summary>
+    public async Task<ProprietaryRiskScoreModel> GetScoreAsync(Stream tsvFileStream)
     {
         return await GetScoreAsync(tsvFileStream, new ClinicalData());
+    }
+
+    /// <summary>
+    /// Calculate confidence based on score and number of contributing factors
+    /// </summary>
+    private int CalculateConfidence(int score, int contributorCount)
+    {
+        // Base confidence on score stability and contributor count
+        var baseConfidence = 70;
+        var scoreConfidence = Math.Min(20, score * 2); // Higher scores = more confidence
+        var contributorConfidence = Math.Min(10, contributorCount / 5); // More contributors = more confidence
+        
+        return Math.Min(95, baseConfidence + scoreConfidence + contributorConfidence);
     }
 }

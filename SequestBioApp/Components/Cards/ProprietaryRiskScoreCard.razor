@@ -1,76 +1,83 @@
 @using RiskCalculator.Models.Cards
 @using RiskCalculator.Services.Cards
 
-<div class="card p-4 shadow h-100 d-flex flex-column justify-content-between" style="min-height: 300px;">
-    <div>
-        <h5 class="card-title"><span class="highlight">Proprietary Risk Score</span></h5>
-        <h6 class="text-muted">"Sequestone Score"</h6>
-
-            @if (Model != null && Model.IsProcessed)
-            {
-                <div class="mt-3">
-                    <div class="d-flex justify-content-between">
-                        <strong>Score</strong>
-                        <span style="color:@GetGaugeColor(Model.Score); font-weight: bold;">@Model.Score%</span>
+<div class="card">
+    <div class="card-header">
+        <h5>
+            <i class="fas fa-chart-line me-2"></i>
+            Proprietary Risk Score
+        </h5>
+        <small class="text-white-50">"Sequestone Score"</small>
+    </div>
+    
+    <div class="card-body d-flex flex-column">
+        @if (IsLoading)
+        {
+            <div class="d-flex justify-content-center align-items-center flex-grow-1">
+                <div class="text-center">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
-                    <div class="progress" style="height: 16px;">
-                        <div class="progress-bar"
-                             role="progressbar"
-                             style="width: @Model.Score%; background-color: @GetGaugeColor(Model.Score);"
-                             aria-valuenow="@Model.Score" aria-valuemin="0" aria-valuemax="100">
+                    <p class="text-muted">Calculating risk score...</p>
+                </div>
+            </div>
+        }
+        else if (Model != null && Model.IsProcessed)
+        {
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-semibold text-dark">Risk Score</span>
+                    <span class="badge" style="background-color: @GetGaugeColor(Model.Score); color: white;">
+                        @Model.Score%
+                    </span>
+                </div>
+                
+                <div class="progress mb-3" style="height: 20px;">
+                    <div class="progress-bar"
+                         role="progressbar"
+                         style="width: @Model.Score%; background-color: @GetGaugeColor(Model.Score);"
+                         aria-valuenow="@Model.Score" aria-valuemin="0" aria-valuemax="100">
+                    </div>
+                </div>
+                
+                <div class="alert alert-@GetAlertClass(Model.RiskCategory)" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="@GetRiskIcon(Model.RiskCategory) me-2"></i>
+                        <div>
+                            <strong>@Model.RiskCategory</strong>
+                            <p class="mb-0 mt-1 small">@Model.Recommendation</p>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <p class="fw-bold mt-3 mb-1">Risk Category:
-                    <span style="color:@GetCategoryColor(Model.RiskCategory)">
-                        @Model.RiskCategory
-                    </span>
-                </p>
-
-                <p class="text-muted" style="font-size: 0.9rem;">
-                    @Model.Recommendation
-                </p>
-
-                <div class="mt-2">
-                    <small class="text-muted">
-                        Confidence: @Model.Confidence% | 
-                        Calculated: @Model.CalculatedAt.ToString("HH:mm")
-                    </small>
-                </div>
-            }
-            else
-            {
-                <div class="mt-3">
-                    <div class="d-flex justify-content-between">
-                        <strong>Score</strong>
-                        <span class="fw-bold">--</span>
+            <div class="mt-auto">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="border-end">
+                            <div class="text-muted small">Confidence</div>
+                            <div class="fw-bold text-primary">@Model.Confidence%</div>
+                        </div>
                     </div>
-                    <div class="progress" style="height: 16px;">
-                        <div class="progress-bar bg-secondary" role="progressbar" style="width: 0%"></div>
+                    <div class="col-6">
+                        <div class="text-muted small">Calculated</div>
+                        <div class="fw-bold text-secondary">@Model.CalculatedAt.ToString("HH:mm")</div>
                     </div>
                 </div>
-
-                <p class="text-muted mt-3">
-                    Upload RNAseq data to calculate your personalized risk score.
-                </p>
-            }
-        </div>
-
-        <div class="text-center mt-3">
-            <button class="btn btn-secondary" @onclick="OnRecalculateClick" disabled="@(!CanRecalculate)">
-                @if (IsCalculating)
-                {
-                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                    <text>Calculating...</text>
-                }
-                else
-                {
-                    <text>Recalculate</text>
-                }
-            </button>
-        </div>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex justify-content-center align-items-center flex-grow-1">
+                <div class="text-center">
+                    <i class="fas fa-upload text-muted mb-3" style="font-size: 3rem;"></i>
+                    <h6 class="text-muted">No Data Available</h6>
+                    <p class="text-muted small">Upload RNAseq data to calculate your personalized risk score.</p>
+                </div>
+            </div>
+        }
     </div>
+</div>
 
 @code {
     [Parameter] public ProprietaryRiskScoreModel? Model { get; set; }
@@ -88,11 +95,19 @@
         _ => "#dc3545"
     };
 
-    private string GetCategoryColor(string category) => category switch
+    private string GetAlertClass(string category) => category switch
     {
-        "Low Risk" => "#28a745",
-        "Moderate Risk" => "#fd7e14",
-        "High Risk" => "#dc3545",
-        _ => "#000000"
+        "Low Risk" => "success",
+        "Moderate Risk" => "warning",
+        "High Risk" => "danger",
+        _ => "secondary"
+    };
+
+    private string GetRiskIcon(string category) => category switch
+    {
+        "Low Risk" => "fas fa-check-circle",
+        "Moderate Risk" => "fas fa-exclamation-triangle",
+        "High Risk" => "fas fa-exclamation-circle",
+        _ => "fas fa-question-circle"
     };
 } 

@@ -19,14 +19,14 @@ public class TabbedInsightsService : ITabbedInsightsService
         {
             PathwayAnalysis = new PathwayAnalysisModel
             {
-                EnrichedPathways = new List<PathwayEnrichment>(),
+                EnrichedPathways = new List<RiskCalculator.Models.Cards.PathwayEnrichment>(),
                 PathwayScores = new Dictionary<string, double>(),
                 PathwaySummary = "Analysis not available",
                 IsAnalysisComplete = false
             },
             ChemoResponse = new ChemoResponseModel
             {
-                ResponsePredictions = new List<ChemoResponse>(),
+                ResponsePredictions = new List<RiskCalculator.Models.Cards.ChemoResponse>(),
                 IsAnalysisComplete = false
             },
             Immunotherapy = new ImmunotherapyModel
@@ -46,31 +46,30 @@ public class TabbedInsightsService : ITabbedInsightsService
         });
     }
 
-    public async Task<TabbedInsightsModel> GenerateTabbedInsightsAsync(Stream tsvFileStream, ClinicalData clinicalData)
+    public async Task<TabbedInsightsModel> GenerateInsightsAsync(Stream tsvFileStream, ClinicalData clinicalData)
     {
         try
         {
-            // Perform all analyses in parallel for efficiency
-            var pathwayTask = PerformPathwayAnalysisAsync(tsvFileStream, clinicalData);
-            var chemoTask = PredictChemoResponseAsync(tsvFileStream, clinicalData);
-            var immunoTask = PredictImmunotherapyResponseAsync(tsvFileStream, clinicalData);
-            var inVitroTask = PerformInVitroAssayAnalysisAsync(tsvFileStream, clinicalData);
-
-            await Task.WhenAll(pathwayTask, chemoTask, immunoTask, inVitroTask);
+            // Scientists: Replace with real comprehensive analysis
+            var pathwayAnalysis = await GeneratePathwayAnalysisAsync(tsvFileStream, clinicalData);
+            var chemoResponse = await GenerateChemoResponseAsync(tsvFileStream, clinicalData);
+            var immunotherapy = await GenerateImmunotherapyAsync(tsvFileStream, clinicalData);
+            var inVitroAssay = await GenerateInVitroAssayAsync(tsvFileStream, clinicalData);
 
             return new TabbedInsightsModel
             {
-                PathwayAnalysis = await pathwayTask,
-                ChemoResponse = await chemoTask,
-                Immunotherapy = await immunoTask,
-                InVitroAssay = await inVitroTask,
+                PathwayAnalysis = pathwayAnalysis,
+                ChemoResponse = chemoResponse,
+                Immunotherapy = immunotherapy,
+                InVitroAssay = inVitroAssay,
                 IsAnalysisComplete = true,
                 CalculatedAt = DateTime.Now
             };
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error performing tabbed insights analysis: {ex.Message}");
+            // Log error appropriately
+            Console.WriteLine($"Error generating tabbed insights: {ex.Message}");
             
             return new TabbedInsightsModel
             {
@@ -84,311 +83,210 @@ public class TabbedInsightsService : ITabbedInsightsService
         }
     }
 
-    public async Task<PathwayAnalysisModel> PerformPathwayAnalysisAsync(Stream tsvFileStream, ClinicalData clinicalData)
+    private async Task<PathwayAnalysisModel> GeneratePathwayAnalysisAsync(Stream tsvFileStream, ClinicalData clinicalData)
     {
-        try
+        // Scientists: Replace with real pathway analysis
+        await Task.Delay(50); // Simulate processing time
+        
+        return new PathwayAnalysisModel
         {
-            // TODO: Scientists - Implement real pathway analysis
-            // This should perform gene set enrichment analysis (GSEA)
-            // Examples: KEGG pathways, GO terms, Reactome pathways
-            
-            // Generate mock pathway scores
-            var pathwayScores = new Dictionary<string, double>
+            PathwayScores = new Dictionary<string, double>
             {
-                { "Cell Cycle", _random.NextDouble() * 2 + 1 },
-                { "DNA Repair", _random.NextDouble() * 2 + 1 },
-                { "Apoptosis", _random.NextDouble() * 2 + 1 },
-                { "Immune Response", _random.NextDouble() * 2 + 1 },
-                { "Angiogenesis", _random.NextDouble() * 2 + 1 },
-                { "Metastasis", _random.NextDouble() * 2 + 1 },
-                { "Drug Resistance", _random.NextDouble() * 2 + 1 }
-            };
-
-            // Generate mock enriched pathways
-            var enrichedPathways = new List<PathwayEnrichment>
+                { "Cell Cycle", 0.85 },
+                { "DNA Repair", 0.72 },
+                { "Apoptosis", 0.65 },
+                { "Angiogenesis", 0.58 },
+                { "Immune Response", 0.45 },
+                { "Metastasis", 0.38 }
+            },
+            EnrichedPathways = new List<RiskCalculator.Models.Cards.PathwayEnrichment>
             {
-                new PathwayEnrichment
-                {
-                    PathwayName = "Cell Cycle Regulation",
-                    EnrichmentScore = 2.3,
+                new RiskCalculator.Models.Cards.PathwayEnrichment 
+                { 
+                    PathwayName = "Cell Cycle Regulation", 
+                    EnrichmentScore = 2.8, 
                     PValue = 0.001,
-                    AdjustedPValue = 0.01,
+                    AdjustedPValue = 0.005,
                     GenesInPathway = new List<string> { "CCND1", "CDK2", "TP53", "RB1" }
                 },
-                new PathwayEnrichment
-                {
-                    PathwayName = "DNA Damage Response",
-                    EnrichmentScore = 1.8,
-                    PValue = 0.005,
-                    AdjustedPValue = 0.02,
-                    GenesInPathway = new List<string> { "BRCA1", "BRCA2", "ATM", "CHEK2" }
+                new RiskCalculator.Models.Cards.PathwayEnrichment 
+                { 
+                    PathwayName = "DNA Damage Response", 
+                    EnrichmentScore = 2.3, 
+                    PValue = 0.003,
+                    AdjustedPValue = 0.012,
+                    GenesInPathway = new List<string> { "BRCA1", "BRCA2", "ATM", "CHEK1" }
+                },
+                new RiskCalculator.Models.Cards.PathwayEnrichment 
+                { 
+                    PathwayName = "Apoptotic Signaling", 
+                    EnrichmentScore = 1.9, 
+                    PValue = 0.008,
+                    AdjustedPValue = 0.025,
+                    GenesInPathway = new List<string> { "BCL2", "BAX", "CASP3", "CASP9" }
                 }
-            };
+            },
+            PathwaySummary = "Analysis reveals significant enrichment in cell cycle and DNA repair pathways, suggesting potential therapeutic targets.",
+            IsAnalysisComplete = true
+        };
+    }
 
-            var pathwaySummary = "Pathway analysis reveals significant enrichment in cell cycle regulation and DNA damage response pathways, suggesting aggressive tumor behavior.";
-
-            await Task.Delay(1); // Simulate processing time
-
-            return new PathwayAnalysisModel
-            {
-                PathwayScores = pathwayScores,
-                EnrichedPathways = enrichedPathways,
-                NetworkData = "Mock network data - replace with real network analysis",
-                PathwaySummary = pathwaySummary,
-                IsAnalysisComplete = true
-            };
-        }
-        catch (Exception ex)
+    private async Task<ChemoResponseModel> GenerateChemoResponseAsync(Stream tsvFileStream, ClinicalData clinicalData)
+    {
+        // Scientists: Replace with real chemotherapy response prediction
+        await Task.Delay(50); // Simulate processing time
+        
+        return new ChemoResponseModel
         {
-            Console.WriteLine($"Error performing pathway analysis: {ex.Message}");
-            
-            return new PathwayAnalysisModel
+            ResponsePredictions = new List<RiskCalculator.Models.Cards.ChemoResponse>
             {
-                PathwayScores = new Dictionary<string, double>(),
-                EnrichedPathways = new List<PathwayEnrichment>(),
-                NetworkData = string.Empty,
-                PathwaySummary = "Analysis failed",
-                IsAnalysisComplete = false
-            };
-        }
+                new RiskCalculator.Models.Cards.ChemoResponse 
+                { 
+                    Agent = "Doxorubicin", 
+                    ResponseLevel = "High", 
+                    Confidence = 0.85,
+                    MechanismOfAction = "DNA intercalation and topoisomerase II inhibition",
+                    ExpectedSideEffects = new List<string> { "Cardiotoxicity", "Myelosuppression", "Alopecia" }
+                },
+                new RiskCalculator.Models.Cards.ChemoResponse 
+                { 
+                    Agent = "Paclitaxel", 
+                    ResponseLevel = "Moderate", 
+                    Confidence = 0.72,
+                    MechanismOfAction = "Microtubule stabilization",
+                    ExpectedSideEffects = new List<string> { "Peripheral neuropathy", "Neutropenia", "Hypersensitivity" }
+                },
+                new RiskCalculator.Models.Cards.ChemoResponse 
+                { 
+                    Agent = "Carboplatin", 
+                    ResponseLevel = "Low", 
+                    Confidence = 0.45,
+                    MechanismOfAction = "DNA cross-linking",
+                    ExpectedSideEffects = new List<string> { "Thrombocytopenia", "Nephrotoxicity", "Ototoxicity" }
+                },
+                new RiskCalculator.Models.Cards.ChemoResponse 
+                { 
+                    Agent = "Gemcitabine", 
+                    ResponseLevel = "Moderate", 
+                    Confidence = 0.68,
+                    MechanismOfAction = "Nucleoside analog",
+                    ExpectedSideEffects = new List<string> { "Flu-like symptoms", "Myelosuppression", "Rash" }
+                }
+            },
+            RecommendedAgents = new List<string> { "Doxorubicin", "Paclitaxel" },
+            AvoidAgents = new List<string> { "Carboplatin" },
+            OverallResponseProbability = 0.73,
+            NCCNGuidelineLinks = new List<string> 
+            { 
+                "https://www.nccn.org/professionals/physician_gls/pdf/breast.pdf",
+                "https://www.nccn.org/professionals/physician_gls/pdf/ovarian.pdf"
+            },
+            IsAnalysisComplete = true
+        };
+    }
+
+    private async Task<ImmunotherapyModel> GenerateImmunotherapyAsync(Stream tsvFileStream, ClinicalData clinicalData)
+    {
+        // Scientists: Replace with real immunotherapy response prediction
+        await Task.Delay(50); // Simulate processing time
+        
+        var responseProbability = _random.NextDouble() * 0.6 + 0.2; // 0.2 to 0.8
+        
+        return new ImmunotherapyModel
+        {
+            ResponseProbability = responseProbability,
+            ResponseCategory = responseProbability > 0.6 ? "Likely Responder" : 
+                             responseProbability > 0.4 ? "Moderate Responder" : "Unlikely Responder",
+            KeyBiomarkers = new Dictionary<string, string>
+            {
+                { "PD-L1", responseProbability > 0.5 ? "Positive (>50%)" : "Negative (<1%)" },
+                { "MSI Status", _random.NextDouble() > 0.85 ? "MSI-High" : "MSS" },
+                { "TMB", responseProbability > 0.6 ? "High (>10 mut/Mb)" : "Low (<10 mut/Mb)" },
+                { "HLA-I", "Normal Expression" },
+                { "Immune Infiltration", responseProbability > 0.5 ? "Hot" : "Cold" }
+            },
+            ImmuneSignatures = new Dictionary<string, double>
+            {
+                { "T-cell Inflamed", responseProbability },
+                { "Interferon-γ", responseProbability * 0.8 },
+                { "Cytolytic Activity", responseProbability * 0.9 },
+                { "Angiogenesis", 1.0 - responseProbability * 0.7 }
+            },
+            RecommendedAgents = responseProbability > 0.6 ? 
+                new List<string> { "Pembrolizumab", "Nivolumab", "Atezolizumab" } :
+                new List<string> { "Consider combination therapy" },
+            ClinicalTrialRecommendations = new List<string>
+            {
+                "NCT04616846: PD-1 inhibitor + chemotherapy",
+                "NCT04489732: CAR-T cell therapy",
+                "NCT04681560: Personalized neoantigen vaccine"
+            },
+            IsAnalysisComplete = true
+        };
+    }
+
+    private async Task<InVitroAssayModel> GenerateInVitroAssayAsync(Stream tsvFileStream, ClinicalData clinicalData)
+    {
+        // Scientists: Replace with real in vitro assay data
+        await Task.Delay(50); // Simulate processing time
+        
+        return new InVitroAssayModel
+        {
+            CollagenProfile = new Dictionary<string, string>
+            {
+                { "COL1A1", "High Expression" },
+                { "COL3A1", "Moderate Expression" },
+                { "COL4A1", "Low Expression" },
+                { "COL5A1", "Moderate Expression" },
+                { "COL6A1", "High Expression" }
+            },
+            MMPProfile = new Dictionary<string, double>
+            {
+                { "MMP2", 2.8 },
+                { "MMP9", 3.2 },
+                { "MMP14", 1.9 },
+                { "MMP1", 2.1 },
+                { "MMP3", 1.7 }
+            },
+            InvasivenessScore = _random.NextDouble() * 80 + 20, // 20-100
+            MigrationScore = _random.NextDouble() * 75 + 25, // 25-100
+            ProliferationScore = _random.NextDouble() * 70 + 30, // 30-100
+            DrugSensitivity = new Dictionary<string, double>
+            {
+                { "Doxorubicin", _random.NextDouble() * 60 + 20 }, // IC50 values
+                { "Paclitaxel", _random.NextDouble() * 80 + 10 },
+                { "Carboplatin", _random.NextDouble() * 100 + 50 },
+                { "Gemcitabine", _random.NextDouble() * 70 + 30 },
+                { "Cisplatin", _random.NextDouble() * 90 + 40 }
+            },
+            MethodologyNotes = "Assays performed using 3D spheroid culture system with automated image analysis. Drug sensitivity measured as IC50 values (μM) after 72h treatment.",
+            IsAnalysisComplete = true
+        };
+    }
+
+    public async Task<TabbedInsightsModel> GenerateTabbedInsightsAsync(Stream tsvFileStream, ClinicalData clinicalData)
+    {
+        return await GenerateInsightsAsync(tsvFileStream, clinicalData);
+    }
+
+    // Public interface methods that delegate to private implementations
+    public async Task<PathwayAnalysisModel> PerformPathwayAnalysisAsync(Stream tsvFileStream, ClinicalData clinicalData)
+    {
+        return await GeneratePathwayAnalysisAsync(tsvFileStream, clinicalData);
     }
 
     public async Task<ChemoResponseModel> PredictChemoResponseAsync(Stream tsvFileStream, ClinicalData clinicalData)
     {
-        try
-        {
-            // TODO: Scientists - Implement real chemotherapy response prediction
-            // This should analyze drug sensitivity signatures
-            // Examples: GSEA drug signatures, pharmacogenomics markers
-            
-            // Generate mock chemotherapy responses
-            var responsePredictions = new List<ChemoResponse>
-            {
-                new ChemoResponse
-                {
-                    Agent = "Cisplatin",
-                    ResponseLevel = "Moderate Sensitivity",
-                    Confidence = 75,
-                    MechanismOfAction = "DNA crosslinking agent",
-                    ExpectedSideEffects = new List<string> { "Nephrotoxicity", "Ototoxicity", "Neuropathy" }
-                },
-                new ChemoResponse
-                {
-                    Agent = "Paclitaxel",
-                    ResponseLevel = "Low Sensitivity",
-                    Confidence = 55,
-                    MechanismOfAction = "Microtubule stabilizer",
-                    ExpectedSideEffects = new List<string> { "Neuropathy", "Myelosuppression" }
-                },
-                new ChemoResponse
-                {
-                    Agent = "Gemcitabine",
-                    ResponseLevel = "Moderate Sensitivity",
-                    Confidence = 80,
-                    MechanismOfAction = "Nucleoside analog",
-                    ExpectedSideEffects = new List<string> { "Myelosuppression", "Flu-like symptoms" }
-                },
-                new ChemoResponse
-                {
-                    Agent = "Pemetrexed",
-                    ResponseLevel = "High Sensitivity",
-                    Confidence = 85,
-                    MechanismOfAction = "Folate antimetabolite",
-                    ExpectedSideEffects = new List<string> { "Myelosuppression", "Fatigue" }
-                }
-            };
-
-            var recommendedAgents = responsePredictions
-                .Where(r => r.ResponseLevel.Contains("High") || r.ResponseLevel.Contains("Moderate"))
-                .Select(r => r.Agent)
-                .ToList();
-
-            var avoidAgents = responsePredictions
-                .Where(r => r.ResponseLevel.Contains("Low"))
-                .Select(r => r.Agent)
-                .ToList();
-
-            var overallResponseProbability = responsePredictions
-                .Where(r => r.ResponseLevel.Contains("High") || r.ResponseLevel.Contains("Moderate"))
-                .Average(r => r.Confidence / 100.0);
-
-            var nccnLinks = new List<string>
-            {
-                "https://www.nccn.org/professionals/physician_gls/pdf/breast.pdf",
-                "https://www.nccn.org/professionals/physician_gls/pdf/lung.pdf"
-            };
-
-            await Task.Delay(1); // Simulate processing time
-
-            return new ChemoResponseModel
-            {
-                ResponsePredictions = responsePredictions,
-                RecommendedAgents = recommendedAgents,
-                AvoidAgents = avoidAgents,
-                OverallResponseProbability = overallResponseProbability,
-                NCCNGuidelineLinks = nccnLinks,
-                IsAnalysisComplete = true
-            };
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error predicting chemotherapy response: {ex.Message}");
-            
-            return new ChemoResponseModel
-            {
-                ResponsePredictions = new List<ChemoResponse>(),
-                RecommendedAgents = new List<string>(),
-                AvoidAgents = new List<string>(),
-                OverallResponseProbability = 0,
-                NCCNGuidelineLinks = new List<string>(),
-                IsAnalysisComplete = false
-            };
-        }
+        return await GenerateChemoResponseAsync(tsvFileStream, clinicalData);
     }
 
     public async Task<ImmunotherapyModel> PredictImmunotherapyResponseAsync(Stream tsvFileStream, ClinicalData clinicalData)
     {
-        try
-        {
-            // TODO: Scientists - Implement real immunotherapy response prediction
-            // This should analyze immune signatures, checkpoint expression, TMB
-            // Examples: T-cell inflamed signature, IFN-gamma signature, PD-L1 expression
-            
-            var responseProbability = 0.6 + _random.NextDouble() * 0.3; // 0.6-0.9
-            var responseCategory = responseProbability switch
-            {
-                >= 0.8 => "Likely Responder",
-                >= 0.6 => "Possible Responder",
-                >= 0.4 => "Unlikely Responder",
-                _ => "Non-Responder"
-            };
-
-            var keyBiomarkers = new Dictionary<string, string>
-            {
-                { "PD-L1 TPS", "5%" },
-                { "TMB", "12 muts/Mb" },
-                { "TILs", "15% (CD8+)" },
-                { "MSI Status", "Stable" }
-            };
-
-            var immuneSignatures = new Dictionary<string, double>
-            {
-                { "T-cell Inflamed", _random.NextDouble() * 2 + 1 },
-                { "IFN-gamma", _random.NextDouble() * 2 + 1 },
-                { "Cytolytic Activity", _random.NextDouble() * 2 + 1 },
-                { "Immune Checkpoint", _random.NextDouble() * 2 + 1 }
-            };
-
-            var recommendedAgents = new List<string>
-            {
-                "Pembrolizumab (PD-1 inhibitor)",
-                "Nivolumab (PD-1 inhibitor)",
-                "Atezolizumab (PD-L1 inhibitor)"
-            };
-
-            var clinicalTrialRecommendations = new List<string>
-            {
-                "CAR-T cell therapy trials",
-                "Combination immunotherapy studies",
-                "Vaccine therapy trials"
-            };
-
-            await Task.Delay(1); // Simulate processing time
-
-            return new ImmunotherapyModel
-            {
-                ResponseProbability = responseProbability,
-                ResponseCategory = responseCategory,
-                KeyBiomarkers = keyBiomarkers,
-                ImmuneSignatures = immuneSignatures,
-                RecommendedAgents = recommendedAgents,
-                ClinicalTrialRecommendations = clinicalTrialRecommendations,
-                IsAnalysisComplete = true
-            };
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error predicting immunotherapy response: {ex.Message}");
-            
-            return new ImmunotherapyModel
-            {
-                ResponseProbability = 0,
-                ResponseCategory = "Analysis failed",
-                KeyBiomarkers = new Dictionary<string, string>(),
-                ImmuneSignatures = new Dictionary<string, double>(),
-                RecommendedAgents = new List<string>(),
-                ClinicalTrialRecommendations = new List<string>(),
-                IsAnalysisComplete = false
-            };
-        }
+        return await GenerateImmunotherapyAsync(tsvFileStream, clinicalData);
     }
 
     public async Task<InVitroAssayModel> PerformInVitroAssayAnalysisAsync(Stream tsvFileStream, ClinicalData clinicalData)
     {
-        try
-        {
-            // TODO: Scientists - Implement real in vitro assay analysis
-            // This should analyze matrix remodeling, invasion, migration markers
-            // Examples: MMP expression, collagen signatures, invasion assays
-            
-            var collagenProfile = new Dictionary<string, string>
-            {
-                { "Type I Collagen", "High deposition" },
-                { "Type IV Collagen", "Moderate deposition" },
-                { "Collagen Crosslinking", "Increased" }
-            };
-
-            var mmpProfile = new Dictionary<string, double>
-            {
-                { "MMP-2", _random.NextDouble() * 5 + 2 }, // 2-7 TPM
-                { "MMP-9", _random.NextDouble() * 4 + 3 }, // 3-7 TPM
-                { "MMP-14", _random.NextDouble() * 3 + 1 } // 1-4 TPM
-            };
-
-            var invasivenessScore = 6.5 + _random.NextDouble() * 2; // 6.5-8.5
-            var migrationScore = 5.8 + _random.NextDouble() * 2.4; // 5.8-8.2
-            var proliferationScore = 7.2 + _random.NextDouble() * 1.8; // 7.2-9.0
-
-            var drugSensitivity = new Dictionary<string, double>
-            {
-                { "Batimastat (MMP inhibitor)", _random.NextDouble() * 50 + 30 }, // 30-80% inhibition
-                { "Ilomastat (MMP inhibitor)", _random.NextDouble() * 45 + 25 }, // 25-70% inhibition
-                { "Collagenase inhibitor", _random.NextDouble() * 40 + 20 } // 20-60% inhibition
-            };
-
-            var methodologyNotes = "Analysis based on gene expression signatures correlated with validated in vitro assays. " +
-                                 "Invasion scores derived from MMP activity and ECM remodeling markers. " +
-                                 "Drug sensitivity predictions based on pathway activity and known drug targets.";
-
-            await Task.Delay(1); // Simulate processing time
-
-            return new InVitroAssayModel
-            {
-                CollagenProfile = collagenProfile,
-                MMPProfile = mmpProfile,
-                InvasivenessScore = invasivenessScore,
-                MigrationScore = migrationScore,
-                ProliferationScore = proliferationScore,
-                DrugSensitivity = drugSensitivity,
-                MethodologyNotes = methodologyNotes,
-                IsAnalysisComplete = true
-            };
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error analyzing in vitro assay: {ex.Message}");
-            
-            return new InVitroAssayModel
-            {
-                CollagenProfile = new Dictionary<string, string>(),
-                MMPProfile = new Dictionary<string, double>(),
-                InvasivenessScore = 0,
-                MigrationScore = 0,
-                ProliferationScore = 0,
-                DrugSensitivity = new Dictionary<string, double>(),
-                MethodologyNotes = "Analysis failed",
-                IsAnalysisComplete = false
-            };
-        }
+        return await GenerateInVitroAssayAsync(tsvFileStream, clinicalData);
     }
 } 

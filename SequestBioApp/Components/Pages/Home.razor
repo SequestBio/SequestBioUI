@@ -1,13 +1,21 @@
 ﻿@page "/"
 @using Radzen
 @using Radzen.Blazor
-@using RiskCalculator.Result
 @using RiskCalculator.Services.RiskScore
+@using RiskCalculator.Services.Cards
 @using RiskCalculator.Models.Cards
 @using SequestBioAI.Data
 @using SequestBioApp.Components.Cards
 @rendermode InteractiveServer
 @inject SequestoneScoreService ScoreService
+@inject IProprietaryRiskScoreService ProprietaryService
+@inject IPatientSummaryService PatientSummaryService
+@inject ITumorMicroenvironmentService TumorMicroenvironmentService
+@inject ITumorImmuneStatusService TumorImmuneStatusService
+@inject IKeyRiskContributorsService KeyRiskContributorsService
+@inject IPredictedOutcomeProbabilitiesService PredictedOutcomeProbabilitiesService
+@inject IBenchmarkComparisonService BenchmarkComparisonService
+@inject ITabbedInsightsService TabbedInsightsService
 
 <PageTitle>Home</PageTitle>
 
@@ -43,56 +51,71 @@
                                 <input type="date" class="form-control" id="dateOfBirth" @bind="clinicalData.DateOfBirth">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="cancerType" class="form-label">Cancer Type <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="cancerType" @bind="clinicalData.CancerType" placeholder="e.g., Breast Cancer" required>
+                                <label for="reportingPhysician" class="form-label">Reporting Physician</label>
+                                <input type="text" class="form-control" id="reportingPhysician" @bind="clinicalData.ReportingPhysician" placeholder="e.g., Dr. Smith">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="cancerSubtype" class="form-label">Cancer Subtype / Stage</label>
-                                <input type="text" class="form-control" id="cancerSubtype" @bind="clinicalData.CancerSubtypeStage" placeholder="e.g., Breast Cancer Stage II">
+                                <label for="institution" class="form-label">Institution</label>
+                                <input type="text" class="form-control" id="institution" @bind="clinicalData.Institution" placeholder="e.g., ABC Medical Center">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="biomarkers" class="form-label">Key Biomarker Status</label>
-                                <input type="text" class="form-control" id="biomarkers" @bind="clinicalData.BiomarkerStatus" placeholder="e.g., ER+, PR+, HER2-">
+                                <label for="cancerType" class="form-label">Cancer Type</label>
+                                <input type="text" class="form-control" id="cancerType" @bind="clinicalData.CancerType" placeholder="e.g., Breast Cancer">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="cancerSubtypeStage" class="form-label">Cancer Subtype/Stage</label>
+                                <input type="text" class="form-control" id="cancerSubtypeStage" @bind="clinicalData.CancerSubtypeStage" placeholder="e.g., Stage IIA">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="biomarkerStatus" class="form-label">Biomarker Status</label>
+                                <input type="text" class="form-control" id="biomarkerStatus" @bind="clinicalData.BiomarkerStatus" placeholder="e.g., ER+, PR+, HER2-">
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="priorTreatments" class="form-label">Brief Summary of Prior Treatments</label>
-                            <textarea class="form-control" id="priorTreatments" @bind="clinicalData.PriorTreatments" rows="3" placeholder="e.g., Lumpectomy, Chemotherapy (6 cycles of TAC), Radiation"></textarea>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="reportingPhysician" class="form-label">Reporting Physician</label>
-                                <input type="text" class="form-control" id="reportingPhysician" @bind="clinicalData.ReportingPhysician" placeholder="Dr. Smith">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="institution" class="form-label">Institution</label>
-                                <input type="text" class="form-control" id="institution" @bind="clinicalData.Institution" placeholder="Memorial Hospital">
-                            </div>
+                            <label for="priorTreatments" class="form-label">Prior Treatments</label>
+                            <textarea class="form-control" id="priorTreatments" @bind="clinicalData.PriorTreatments" rows="3" placeholder="e.g., Chemotherapy, Radiation"></textarea>
                         </div>
                     </div>
                 </div>
 
-                <!-- RNAseq Data Upload -->
+                <!-- File Upload Section -->
                 <div class="card shadow mb-4">
                     <div class="card-header bg-success text-white">
-                        <h4 class="mb-0"><i class="fas fa-dna"></i> RNAseq Data Upload</h4>
+                        <h4 class="mb-0"><i class="fas fa-upload"></i> Upload RNAseq Data</h4>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="tsvFile" class="form-label">Upload TSV File <span class="text-danger">*</span></label>
-                            <InputFile OnChange="HandleFileSelected" accept=".tsv" MaxFileSize="10485760" class="form-control" id="tsvFile" />
-                            <div class="form-text">Please upload a TSV file containing RNAseq data with gene symbols in column 2 and TPM values in column 7.</div>
+                            <label for="fileUpload" class="form-label">Select TSV File <span class="text-danger">*</span></label>
+                            <InputFile id="fileUpload" class="form-control" OnChange="HandleFileSelected" accept=".tsv,.txt" />
+                            <div class="form-text">Upload a TSV file containing gene expression data (max 10MB).</div>
+                        </div>
+                        
+                        @if (fileSelected)
+                        {
+                            <div class="alert alert-info">
+                                <i class="fas fa-check-circle"></i> File selected: <strong>@uploadedFile!.Name</strong> (@(uploadedFile.Size / 1024) KB)
+                            </div>
+                        }
+                        
+                        <div class="d-grid">
+                            <button type="button" class="btn btn-success btn-lg" @onclick="UploadAndGenerateScore" disabled="@(!fileSelected || isLoading)">
+                                @if (isLoading)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                    <text>Processing...</text>
+                                }
+                                else
+                                {
+                                    <i class="fas fa-calculator me-2"></i>
+                                    <text>Generate Risk Score</text>
+                                }
+                            </button>
                         </div>
                     </div>
-                </div>
-
-                <!-- Generate Score Button -->
-                <div class="text-center">
-                    <button class="btn btn-primary btn-lg px-5" @onclick="UploadAndGenerateScore" disabled="@(!IsFormValid())">
-                        <i class="fas fa-calculator"></i> Generate Risk Score
-                    </button>
                 </div>
             </div>
         </div>
@@ -100,41 +123,35 @@
 }
 else
 {
-    <div class="container mt-5">
-        <!-- NEW: Upload area -->
-        <div class="row justify-content-center mb-4">
-            <div class="col-md-6 text-center">
-                <InputFile OnChange="HandleFileSelected" accept=".tsv" MaxFileSize="10485760"/>
-                <button class="btn btn-primary ms-3" @onclick="UploadAndGenerateScore" disabled="@(!fileSelected)">
-                    Recalculate Score
-                </button>
-            </div>
+    <div class="container-fluid mt-4">
+        <div class="text-center mb-4">
+            <h1 class="display-5 fw-bold">Risk Assessment Results</h1>
+            <p class="text-muted">Patient: <strong>@clinicalData.FullName</strong> | ID: <strong>@clinicalData.PatientId</strong></p>
         </div>
 
-        <!-- Dashboard Cards -->
         <div class="row justify-content-center gy-4">
             <!-- Card 1: Proprietary Risk Score -->
             <div class="col-md-4">
                 <ProprietaryRiskScoreCard IsLoading="@isLoading" 
                                         PatientId="@clinicalData.PatientId" 
-                                        RiskScore="@scoreResult.Score"
-                                        Model="@GetProprietaryRiskScoreModel()" />
+                                        RiskScore="@(proprietaryModel?.Score ?? 0)"
+                                        Model="@proprietaryModel" />
             </div>
 
             <!-- Card 2: Patient Summary -->
             <div class="col-md-4">
                 <PatientSummaryCard IsLoading="@isLoading" 
                                   PatientId="@clinicalData.PatientId" 
-                                  RiskScore="@scoreResult.Score"
-                                  Model="@GetPatientSummaryModel()" />
+                                  RiskScore="@(proprietaryModel?.Score ?? 0)"
+                                  Model="@patientSummaryModel" />
             </div>
 
             <!-- Card 3: Tumor Microenvironment (TME) -->
             <div class="col-md-4">
                 <TumorMicroenvironmentCard IsLoading="@isLoading" 
                                          PatientId="@clinicalData.PatientId" 
-                                         RiskScore="@scoreResult.Score"
-                                         Model="@GetTumorMicroenvironmentModel()" />
+                                         RiskScore="@(proprietaryModel?.Score ?? 0)"
+                                         Model="@tumorMicroenvironmentModel" />
             </div>
         </div>
 
@@ -143,8 +160,8 @@ else
             <div class="col-md-6">
                 <TumorImmuneStatusCard IsLoading="@isLoading" 
                                      PatientId="@clinicalData.PatientId" 
-                                     RiskScore="@scoreResult.Score"
-                                     Model="@GetTumorImmuneStatusModel()" />
+                                     RiskScore="@(proprietaryModel?.Score ?? 0)"
+                                     Model="@tumorImmuneStatusModel" />
             </div>
         </div>
 
@@ -155,16 +172,16 @@ else
             <div class="col-md-6">
                 <KeyRiskContributorsCard IsLoading="@isLoading" 
                                        PatientId="@clinicalData.PatientId" 
-                                       RiskScore="@scoreResult.Score"
-                                       Model="@GetKeyRiskContributorsModel()" />
+                                       RiskScore="@(proprietaryModel?.Score ?? 0)"
+                                       Model="@keyRiskContributorsModel" />
             </div>
 
             <!-- Predicted Outcome Probabilities Card -->
             <div class="col-md-6">
                 <PredictedOutcomeProbabilitiesCard IsLoading="@isLoading" 
                                                  PatientId="@clinicalData.PatientId" 
-                                                 RiskScore="@scoreResult.Score"
-                                                 Model="@GetPredictedOutcomeProbabilitiesModel()" />
+                                                 RiskScore="@(proprietaryModel?.Score ?? 0)"
+                                                 Model="@predictedOutcomeProbabilitiesModel" />
             </div>
         </div>
         <!-- Additional Cards Row -->
@@ -174,16 +191,16 @@ else
             <div class="col-md-6">
                 <BenchmarkComparisonCard IsLoading="@isLoading" 
                                        PatientId="@clinicalData.PatientId" 
-                                       RiskScore="@scoreResult.Score"
-                                       Model="@GetBenchmarkComparisonModel()" />
+                                       RiskScore="@(proprietaryModel?.Score ?? 0)"
+                                       Model="@benchmarkComparisonModel" />
             </div>
 
             <!-- Tabbed Insights Card -->
             <div class="col-md-6">
                 <TabbedInsightsCard IsLoading="@isLoading" 
                                   PatientId="@clinicalData.PatientId" 
-                                  RiskScore="@scoreResult.Score"
-                                  Model="@GetTabbedInsightsModel()" />
+                                  RiskScore="@(proprietaryModel?.Score ?? 0)"
+                                  Model="@tabbedInsightsModel" />
             </div>
 
         </div>
@@ -194,21 +211,18 @@ else
     private bool scoreGenerated = false; // Start with form instead of results
     private bool isLoading = false;
 
-    private PatientScoreResult scoreResult = new()
-    {
-        Score = 0,
-        Confidence = 0,
-        GenomicInstability = 0,
-        TILLevel = 0,
-        TumorHotColdScore = 0,
-        RiskCategory = "N/A",
-        Recommendation = "Upload a .tsv file to calculate your personalized score.",
-        TopContributors = new List<RiskContributor>(),
-        AllContributors = new List<RiskContributor>()
-    };
-
     // Clinical data form binding
     private ClinicalData clinicalData = new();
+
+    // Card models - populated by services
+    private ProprietaryRiskScoreModel? proprietaryModel;
+    private PatientSummaryModel? patientSummaryModel;
+    private TumorMicroenvironmentModel? tumorMicroenvironmentModel;
+    private TumorImmuneStatusModel? tumorImmuneStatusModel;
+    private KeyRiskContributorsModel? keyRiskContributorsModel;
+    private PredictedOutcomeProbabilitiesModel? predictedOutcomeProbabilitiesModel;
+    private BenchmarkComparisonModel? benchmarkComparisonModel;
+    private TabbedInsightsModel? tabbedInsightsModel;
 
     private IBrowserFile? uploadedFile;
     private bool fileSelected => uploadedFile != null;
@@ -219,7 +233,7 @@ else
         uploadedFile = e.File;
         cachedFileStream = new MemoryStream();
         await uploadedFile.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(cachedFileStream);
-        scoreGenerated = true;
+        // Don't set scoreGenerated here - only after actual processing
     }
 
     private async Task UploadAndGenerateScore()
@@ -227,38 +241,42 @@ else
         try
         {
             if (cachedFileStream == null)
+            {
+                Console.WriteLine("❌ No cached file stream available");
                 return;
+            }
 
+            Console.WriteLine("🚀 Starting score generation...");
+            
             // Set loading state
             isLoading = true;
             StateHasChanged();
 
-            // Reset score temporarily (triggers UI update)
-            scoreResult.Score = 0;
-            scoreResult.Confidence = 0;
-            scoreResult.GenomicInstability = 0;
-            scoreResult.TILLevel = 0;
-            scoreResult.TumorHotColdScore = 0;
-            scoreResult.RiskCategory = string.Empty;
-            scoreResult.Recommendation = string.Empty;
-            scoreResult.TopContributors.Clear();
-            scoreResult.AllContributors.Clear();
+            // Reset models
+            ClearModels();
 
             // Wait a short moment for visual effect
             await Task.Delay(100);
 
-            // Reload and process file with clinical data
+            // Process file with clinical data - get the main risk score
             cachedFileStream.Position = 0;
-            scoreResult = await ScoreService.GetScoreAsync(cachedFileStream, clinicalData);
+            Console.WriteLine("📊 Calling ScoreService.GetScoreAsync...");
+            proprietaryModel = await ScoreService.GetScoreAsync(cachedFileStream, clinicalData);
+            Console.WriteLine($"✅ Proprietary model generated: Score={proprietaryModel.Score}, Category={proprietaryModel.RiskCategory}");
+            
             scoreGenerated = true;
 
-            Console.WriteLine($"🔢 Risk Category: {scoreResult.RiskCategory}");
-            Console.WriteLine($"📊 Top Contributors: {scoreResult.TopContributors.Count}");
+            // Generate all other card models using services
+            Console.WriteLine("🔄 Generating other card models...");
+            await GenerateCardModels();
+
+            Console.WriteLine($"🔢 Risk Category: {proprietaryModel.RiskCategory}");
             Console.WriteLine($"👤 Patient: {clinicalData.FullName}");
         }
         catch (Exception ex)
         {
             Console.WriteLine("❌ Exception in UploadAndGenerateScore: " + ex.Message);
+            Console.WriteLine("❌ Stack trace: " + ex.StackTrace);
         }
         finally
         {
@@ -268,200 +286,99 @@ else
         }
     }
 
+    private async Task GenerateCardModels()
+    {
+        try
+        {
+            Console.WriteLine("🔄 Starting card model generation...");
+            
+            // Generate models using injected services (proprietaryModel already generated)
+            var tasks = new List<Task>
+            {
+                GeneratePatientSummaryModel(),
+                GenerateTumorMicroenvironmentModel(),
+                GenerateTumorImmuneStatusModel(),
+                GenerateKeyRiskContributorsModel(),
+                GeneratePredictedOutcomeProbabilitiesModel(),
+                GenerateBenchmarkComparisonModel(),
+                GenerateTabbedInsightsModel()
+            };
+
+            await Task.WhenAll(tasks);
+            Console.WriteLine("✅ All card models generated successfully");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Error generating card models: {ex.Message}");
+            Console.WriteLine($"❌ Stack trace: {ex.StackTrace}");
+        }
+    }
+
+    private async Task GeneratePatientSummaryModel()
+    {
+        try
+        {
+            Console.WriteLine("📋 Generating patient summary model...");
+            patientSummaryModel = await PatientSummaryService.ProcessPatientDataAsync(clinicalData);
+            Console.WriteLine($"✅ Patient summary model generated: HasData={patientSummaryModel.HasClinicalData}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Error generating patient summary: {ex.Message}");
+        }
+    }
+
+    private async Task GenerateTumorMicroenvironmentModel()
+    {
+        cachedFileStream!.Position = 0;
+        tumorMicroenvironmentModel = await TumorMicroenvironmentService.AnalyzeTumorMicroenvironmentAsync(cachedFileStream, clinicalData);
+    }
+
+    private async Task GenerateTumorImmuneStatusModel()
+    {
+        cachedFileStream!.Position = 0;
+        tumorImmuneStatusModel = await TumorImmuneStatusService.AnalyzeTumorImmuneStatusAsync(cachedFileStream, clinicalData);
+    }
+
+    private async Task GenerateKeyRiskContributorsModel()
+    {
+        cachedFileStream!.Position = 0;
+        keyRiskContributorsModel = await KeyRiskContributorsService.AnalyzeKeyRiskContributorsAsync(cachedFileStream, clinicalData);
+    }
+
+    private async Task GeneratePredictedOutcomeProbabilitiesModel()
+    {
+        predictedOutcomeProbabilitiesModel = await PredictedOutcomeProbabilitiesService.GetPredictedOutcomeProbabilitiesAsync(clinicalData.PatientId, proprietaryModel?.Score ?? 0);
+    }
+
+    private async Task GenerateBenchmarkComparisonModel()
+    {
+        cachedFileStream!.Position = 0;
+        benchmarkComparisonModel = await BenchmarkComparisonService.PerformBenchmarkComparisonAsync(cachedFileStream, clinicalData);
+    }
+
+    private async Task GenerateTabbedInsightsModel()
+    {
+        cachedFileStream!.Position = 0;
+        tabbedInsightsModel = await TabbedInsightsService.GenerateTabbedInsightsAsync(cachedFileStream, clinicalData);
+    }
+
+    private void ClearModels()
+    {
+        // Clear all card models
+        proprietaryModel = null;
+        patientSummaryModel = null;
+        tumorMicroenvironmentModel = null;
+        tumorImmuneStatusModel = null;
+        keyRiskContributorsModel = null;
+        predictedOutcomeProbabilitiesModel = null;
+        benchmarkComparisonModel = null;
+        tabbedInsightsModel = null;
+    }
+
     private bool IsFormValid()
     {
-        return !string.IsNullOrWhiteSpace(clinicalData.FullName) &&
-               !string.IsNullOrWhiteSpace(clinicalData.PatientId) &&
-               !string.IsNullOrWhiteSpace(clinicalData.CancerType) &&
-               fileSelected;
+        return !string.IsNullOrWhiteSpace(clinicalData.FullName) && 
+               !string.IsNullOrWhiteSpace(clinicalData.PatientId);
     }
-
-    // Model creation methods to convert PatientScoreResult to card models
-    private ProprietaryRiskScoreModel GetProprietaryRiskScoreModel()
-    {
-        return new ProprietaryRiskScoreModel
-        {
-            Score = scoreResult.Score,
-            RiskCategory = scoreResult.RiskCategory,
-            Recommendation = scoreResult.Recommendation,
-            Confidence = scoreResult.Confidence,
-            IsProcessed = scoreGenerated && scoreResult.Score > 0,
-            CalculatedAt = DateTime.Now
-        };
-    }
-
-    private PatientSummaryModel GetPatientSummaryModel()
-    {
-        return new PatientSummaryModel
-        {
-            ClinicalInfo = scoreResult.ClinicalInfo,
-            HasClinicalData = !string.IsNullOrEmpty(clinicalData.PatientId),
-            IdentifiedRiskFactors = new List<string>(),
-            ClinicalSummary = $"Patient {clinicalData.FullName} with {clinicalData.CancerType}"
-        };
-    }
-
-    private TumorMicroenvironmentModel GetTumorMicroenvironmentModel()
-    {
-        return new TumorMicroenvironmentModel
-        {
-            GenomicInstability = scoreResult.GenomicInstability,
-            TILLevel = scoreResult.TILLevel,
-            MutationBurden = scoreResult.GenomicInstability * 0.1, // Estimate
-            ImmuneInfiltration = scoreResult.TILLevel * 0.01,
-            CellularHeterogeneity = 0.75,
-            StromalContent = 45.0,
-            IsAnalysisComplete = scoreGenerated && scoreResult.GenomicInstability > 0,
-            CalculatedAt = DateTime.Now
-        };
-    }
-
-    private TumorImmuneStatusModel GetTumorImmuneStatusModel()
-    {
-        return new TumorImmuneStatusModel
-        {
-            TumorHotColdScore = scoreResult.TumorHotColdScore,
-            ImmuneStatus = scoreResult.TumorHotColdScore > 70 ? "Hot" : scoreResult.TumorHotColdScore > 30 ? "Moderate" : "Cold",
-            StatusDescription = scoreResult.TumorHotColdScore > 70 ? "High immune infiltration detected" : "Low immune infiltration detected",
-            TCellInfiltration = scoreResult.TumorHotColdScore * 0.01,
-            BCellInfiltration = scoreResult.TumorHotColdScore * 0.005,
-            NKCellInfiltration = scoreResult.TumorHotColdScore * 0.003,
-            MacrophageInfiltration = scoreResult.TumorHotColdScore * 0.008,
-            PDL1Expression = scoreResult.TumorHotColdScore * 0.5,
-            InterferonGammaSignature = scoreResult.TumorHotColdScore * 0.3,
-            IsAnalysisComplete = scoreGenerated && scoreResult.TumorHotColdScore > 0,
-            CalculatedAt = DateTime.Now
-        };
-    }
-
-    private KeyRiskContributorsModel GetKeyRiskContributorsModel()
-    {
-        return new KeyRiskContributorsModel
-        {
-            TopContributors = scoreResult.TopContributors,
-            AllContributors = scoreResult.AllContributors,
-            TotalFactorsAnalyzed = scoreResult.AllContributors.Count,
-            RiskFactors = scoreResult.AllContributors.Where(c => c.Impact == "High Risk").ToList(),
-            ProtectiveFactors = scoreResult.AllContributors.Where(c => c.Impact == "Protective").ToList(),
-            ContributorSummary = $"Analysis identified {scoreResult.TopContributors.Count} key contributors to risk score"
-        };
-    }
-
-    private PredictedOutcomeProbabilitiesModel GetPredictedOutcomeProbabilitiesModel()
-    {
-        var riskMultiplier = scoreResult.Score / 100.0;
-        var baseSurvival = 0.85 - (riskMultiplier * 0.3); // Higher risk = lower survival
-        
-        return new PredictedOutcomeProbabilitiesModel
-        {
-            FiveYearSurvival = baseSurvival,
-            TenYearSurvival = baseSurvival * 0.8,
-            MedianSurvivalMonths = (baseSurvival * 120), // Estimate
-            ConfidenceInterval = (baseSurvival - 0.1, baseSurvival + 0.1),
-            RFSData = new List<SurvivalPoint>
-            {
-                new SurvivalPoint { Year = 5, Probability = baseSurvival, ConfidenceLower = baseSurvival - 0.1, ConfidenceUpper = baseSurvival + 0.1 }
-            },
-            MFSData = new List<SurvivalPoint>
-            {
-                new SurvivalPoint { Year = 5, Probability = baseSurvival + 0.05, ConfidenceLower = baseSurvival - 0.05, ConfidenceUpper = baseSurvival + 0.15 }
-            },
-            OSData = new List<SurvivalPoint>
-            {
-                new SurvivalPoint { Year = 5, Probability = baseSurvival + 0.1, ConfidenceLower = baseSurvival, ConfidenceUpper = baseSurvival + 0.2 }
-            },
-            DFSData = new List<SurvivalPoint>
-            {
-                new SurvivalPoint { Year = 5, Probability = baseSurvival - 0.05, ConfidenceLower = baseSurvival - 0.15, ConfidenceUpper = baseSurvival + 0.05 }
-            },
-            IsAnalysisComplete = scoreGenerated
-        };
-    }
-
-    private BenchmarkComparisonModel GetBenchmarkComparisonModel()
-    {
-        return new BenchmarkComparisonModel
-        {
-            SequestoneScore = scoreResult.Score,
-            ClinicalFactorsScore = scoreResult.Score * 0.8, // Estimate
-            BenchmarkData = new List<BenchmarkPoint>
-            {
-                new BenchmarkPoint { Label = "Oncotype DX", Value = scoreResult.Score * 0.7, Metric = "AUC", Color = "#ff7f0e" },
-                new BenchmarkPoint { Label = "MammaPrint", Value = scoreResult.Score * 0.75, Metric = "AUC", Color = "#2ca02c" },
-                new BenchmarkPoint { Label = "Clinical Factors", Value = scoreResult.Score * 0.8, Metric = "AUC", Color = "#d62728" }
-            },
-            PerformanceMetrics = new Dictionary<string, double>
-            {
-                { "AUC", 0.85 },
-                { "Sensitivity", 0.88 },
-                { "Specificity", 0.82 },
-                { "PPV", 0.79 },
-                { "NPV", 0.91 }
-            },
-            ComparisonSummary = "SequestBio Score outperforms traditional methods with higher AUC and sensitivity",
-            IsAnalysisComplete = scoreGenerated
-        };
-    }
-
-    private TabbedInsightsModel GetTabbedInsightsModel()
-    {
-        return new TabbedInsightsModel
-        {
-            PathwayAnalysis = new PathwayAnalysisModel
-            {
-                EnrichedPathways = new List<PathwayEnrichment>
-                {
-                    new PathwayEnrichment { PathwayName = "Cell Cycle", EnrichmentScore = 2.5, PValue = 0.001 },
-                    new PathwayEnrichment { PathwayName = "DNA Repair", EnrichmentScore = 2.1, PValue = 0.005 },
-                    new PathwayEnrichment { PathwayName = "Apoptosis", EnrichmentScore = 1.8, PValue = 0.01 }
-                },
-                PathwayScores = new Dictionary<string, double>
-                {
-                    { "Proliferation", 0.85 },
-                    { "Invasion", 0.65 },
-                    { "Angiogenesis", 0.55 },
-                    { "Metastasis", 0.45 }
-                }
-            },
-            ChemoResponse = new ChemoResponseModel
-            {
-                ResponsePredictions = new List<ChemoResponse>
-                {
-                    new ChemoResponse { Agent = "Doxorubicin", ResponseLevel = "High", Confidence = 0.85 },
-                    new ChemoResponse { Agent = "Paclitaxel", ResponseLevel = "Moderate", Confidence = 0.72 },
-                    new ChemoResponse { Agent = "Carboplatin", ResponseLevel = "Low", Confidence = 0.45 }
-                },
-                IsAnalysisComplete = scoreGenerated
-            },
-            Immunotherapy = new ImmunotherapyModel
-            {
-                ResponseProbability = scoreResult.TumorHotColdScore / 100.0,
-                ResponseCategory = scoreResult.TumorHotColdScore > 50 ? "Likely Responder" : "Unlikely Responder",
-                KeyBiomarkers = new Dictionary<string, string>
-                {
-                    { "PD-L1", scoreResult.TumorHotColdScore > 50 ? "Positive" : "Negative" },
-                    { "MSI", "Stable" },
-                    { "TMB", scoreResult.GenomicInstability > 50 ? "High" : "Low" }
-                },
-                IsAnalysisComplete = scoreGenerated
-            },
-            InVitroAssay = new InVitroAssayModel
-            {
-                CollagenProfile = new Dictionary<string, string>
-                {
-                    { "COL1A1", "High" },
-                    { "COL3A1", "Moderate" },
-                    { "COL4A1", "Low" }
-                },
-                DrugSensitivity = new Dictionary<string, double>
-                {
-                    { "Drug A", 45.0 },
-                    { "Drug B", 62.0 }
-                },
-                IsAnalysisComplete = scoreGenerated
-            },
-            IsAnalysisComplete = scoreGenerated
-        };
-    }
-
 }
