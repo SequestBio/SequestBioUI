@@ -12,6 +12,8 @@
     --border-radius: 0.375rem;
     --box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     --card-border: #e2e8f0;
+    --tier-spacing: 3rem;
+    --card-spacing: 1.5rem;
 }
 
 /* Global Styles */
@@ -21,6 +23,410 @@ body {
     color: #334155;
     line-height: 1.5;
 }
+
+/* ======================
+   TIER-BASED LAYOUT SYSTEM
+   ====================== */
+
+/* Results Container */
+.results-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-bottom: 2px solid var(--card-border);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.patient-info h4 {
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+}
+
+.patient-info .text-primary {
+    color: var(--primary-color) !important;
+    font-weight: 700;
+}
+
+/* Tier Structure */
+.results-tier {
+    margin-bottom: var(--tier-spacing);
+    padding: 0 0.5rem;
+}
+
+.tier-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+}
+
+.tier-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.025em;
+}
+
+.tier-subtitle {
+    font-size: 1rem;
+    color: var(--secondary-color);
+    margin-bottom: 0;
+    font-weight: 400;
+}
+
+/* Card Wrappers with Visual Hierarchy */
+.card-wrapper {
+    height: 100%;
+    position: relative;
+}
+
+/* ======================
+   CARD REORDERING UTILITIES
+   ====================== */
+
+/* Easy reordering classes - just change the tier class */
+.tier-critical .card {
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
+    min-height: 350px;
+    transform: scale(1.02);
+}
+
+.tier-critical .card-header {
+    background: linear-gradient(135deg, #113C35 0%, #0f332e 100%);
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 1.25rem 1.5rem;
+}
+
+.tier-supporting .card {
+    border: 1px solid var(--card-border);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    min-height: 320px;
+}
+
+.tier-supporting .card-header {
+    background-color: var(--card-header-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.tier-analytical .card {
+    border: 1px solid var(--card-border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    min-height: 300px;
+}
+
+.tier-analytical .card-header {
+    background-color: var(--card-header-color);
+    font-size: 1.05rem;
+}
+
+.tier-advanced .card {
+    border: 1px solid var(--card-border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    min-height: 280px;
+}
+
+.tier-advanced .card-header {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.tier-detailed .card {
+    border: 1px solid var(--card-border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    min-height: 400px;
+}
+
+.tier-detailed .card-header {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Tier 1: Critical Cards - Largest emphasis */
+.tier-1 .critical-card {
+    transform: scale(1.02);
+    z-index: 10;
+}
+
+.tier-1 .critical-card .card {
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
+    min-height: 350px;
+}
+
+.tier-1 .critical-card .card-header {
+    background: linear-gradient(135deg, #113C35 0%, #0f332e 100%);
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 1.25rem 1.5rem;
+}
+
+/* Tier 2: Supporting Cards - Medium emphasis */
+.tier-2 .supporting-card .card {
+    border: 1px solid var(--card-border);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    min-height: 320px;
+}
+
+.tier-2 .supporting-card .card-header {
+    background-color: var(--card-header-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Tier 3: Analytical Cards - Standard emphasis */
+.tier-3 .analytical-card .card {
+    border: 1px solid var(--card-border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    min-height: 300px;
+}
+
+.tier-3 .analytical-card .card-header {
+    background-color: var(--card-header-color);
+    font-size: 1.05rem;
+}
+
+/* Tier 4: Advanced Cards - Wide format */
+.tier-4 .advanced-card .card {
+    border: 1px solid var(--card-border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    min-height: 280px;
+}
+
+.tier-4 .advanced-card .card-header {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Tier 5: Detailed Cards - Comprehensive format */
+.tier-5 .detailed-card .card {
+    border: 1px solid var(--card-border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    min-height: 400px;
+}
+
+.tier-5 .detailed-card .card-header {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* ======================
+   RESPONSIVE DESIGN
+   ====================== */
+
+/* Responsive Design */
+@media (max-width: 1199px) {
+    .tier-1 .critical-card {
+        transform: scale(1.01);
+    }
+    
+    .tier-critical .card {
+        transform: scale(1.01);
+    }
+    
+    .tier-title {
+        font-size: 1.5rem;
+    }
+    
+    .tier-subtitle {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 991px) {
+    /* Tier 2: Stack to 2 columns on tablet */
+    .tier-2 .row .col-lg-4:nth-child(3) {
+        margin-top: var(--card-spacing);
+    }
+    
+    .tier-1 .critical-card {
+        transform: none;
+    }
+    
+    .tier-critical .card {
+        transform: none;
+    }
+    
+    .tier-1 .critical-card .card {
+        min-height: 300px;
+    }
+    
+    .tier-2 .supporting-card .card {
+        min-height: 280px;
+    }
+    
+    .tier-critical .card {
+        min-height: 300px;
+    }
+    
+    .tier-supporting .card {
+        min-height: 280px;
+    }
+}
+
+@media (max-width: 767px) {
+    :root {
+        --tier-spacing: 2rem;
+        --card-spacing: 1rem;
+    }
+    
+    .results-tier {
+        padding: 0;
+    }
+    
+    .tier-header {
+        margin-bottom: 1.5rem;
+        padding: 0.5rem 0;
+    }
+    
+    .tier-title {
+        font-size: 1.25rem;
+    }
+    
+    .tier-subtitle {
+        font-size: 0.85rem;
+    }
+    
+    /* All cards single column on mobile */
+    .tier-1 .critical-card .card,
+    .tier-2 .supporting-card .card,
+    .tier-3 .analytical-card .card,
+    .tier-critical .card,
+    .tier-supporting .card,
+    .tier-analytical .card {
+        min-height: 250px;
+    }
+    
+    .card-header {
+        padding: 1rem 1.25rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+/* Enhanced Card Hover Effects (subtle) */
+.card-wrapper:hover .card {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.tier-1 .critical-card:hover .card {
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
+}
+
+.tier-critical:hover .card {
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
+}
+
+/* Smooth transitions for professional feel */
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Loading State Enhancements */
+.card .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.3em;
+}
+
+.tier-1 .spinner-border {
+    color: var(--primary-color);
+}
+
+.tier-4 .spinner-border {
+    color: #6366f1;
+}
+
+.tier-5 .spinner-border {
+    color: var(--success-color);
+}
+
+.tier-critical .spinner-border {
+    color: var(--primary-color);
+}
+
+.tier-advanced .spinner-border {
+    color: #6366f1;
+}
+
+.tier-detailed .spinner-border {
+    color: var(--success-color);
+}
+
+/* ======================
+   CARD SPACING AND ALIGNMENT
+   ====================== */
+
+/* Ensure consistent card heights within rows */
+.row .card-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.row .card-wrapper .card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.row .card-wrapper .card .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Professional spacing utilities */
+.results-spacing-sm {
+    --tier-spacing: 2rem;
+}
+
+.results-spacing-md {
+    --tier-spacing: 3rem;
+}
+
+.results-spacing-lg {
+    --tier-spacing: 4rem;
+}
+
+/* Professional font size utilities */
+.tier-title-sm {
+    font-size: 1.5rem;
+}
+
+.tier-title-md {
+    font-size: 1.75rem;
+}
+
+.tier-title-lg {
+    font-size: 2rem;
+}
+
+/* Ensure consistent font sizes */
+small, .small {
+    font-size: 0.875rem;
+}
+
+/* ======================
+   EXISTING STYLES (PRESERVED)
+   ====================== */
 
 /* Unified Card Styling */
 .card {
@@ -281,17 +687,6 @@ h1, h2, h3, h4, h5, h6 {
 .py-4 {
     padding-top: 1.5rem !important;
     padding-bottom: 1.5rem !important;
-}
-
-/* Remove any animations or transitions for professional look */
-* {
-    transition: none !important;
-    animation: none !important;
-}
-
-/* Ensure consistent font sizes */
-small, .small {
-    font-size: 0.875rem;
 }
 
 /* Professional color overrides */

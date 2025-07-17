@@ -23,6 +23,7 @@ builder.Services.AddScoped<IKeyRiskContributorsService, KeyRiskContributorsServi
 builder.Services.AddScoped<IPredictedOutcomeProbabilitiesService, PredictedOutcomeProbabilitiesService>();
 builder.Services.AddScoped<IBenchmarkComparisonService, BenchmarkComparisonService>();
 builder.Services.AddScoped<ITabbedInsightsService, TabbedInsightsService>();
+builder.Services.AddScoped<IShapWaterfallService, ShapWaterfallService>();
 
 builder.Services.AddHttpClient();
 builder.Services.AddRadzenComponents();
