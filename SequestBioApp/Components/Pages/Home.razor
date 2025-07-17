@@ -149,14 +149,14 @@ else
 
         <div class="container-fluid px-4">
             <!-- TIER 1: CRITICAL INSIGHTS -->
-            <div class="results-tier tier-1">
+            <div class="results-tier tier-1" style="margin-top: 2rem;">
                 <div class="row g-4">
-                    <div class="col-lg-6">
+                    <div class="col-lg-7 col-md-6">
                         <div class="card-wrapper critical-card">
                             <ProprietaryRiskScoreCard IsLoading="@isLoading" Model="@proprietaryModel" />
                         </div>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-5 col-md-6">
                         <div class="card-wrapper critical-card">
                             <TumorImmuneStatusCard IsLoading="@isLoading" Model="@tumorImmuneStatusModel" />
                         </div>

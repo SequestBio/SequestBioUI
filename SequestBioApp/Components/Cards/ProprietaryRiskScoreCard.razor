@@ -1,150 +1,313 @@
 @using RiskCalculator.Models.Cards
 @using RiskCalculator.Services.Cards
 
-<div class="card">
-    <div class="card-header">
-        <h5>
-            <i class="fas fa-chart-line me-2"></i>
-            Proprietary Risk Score
-        </h5>
-    </div>
-    
-    <div class="card-body d-flex flex-column">
-        @if (IsLoading)
-        {
-            <div class="d-flex justify-content-center align-items-center flex-grow-1">
-                <div class="text-center">
-                    <div class="spinner-border text-primary mb-3" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <p class="text-muted">Calculating risk score...</p>
-                </div>
+<div class="professional-card">
+    @if (IsLoading)
+    {
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Calculating risk assessment...</p>
+        </div>
+    }
+    else if (Model != null && Model.IsProcessed)
+    {
+        <div class="card-content">
+            <!-- Header Section -->
+            <div class="card-header-section">
+                <h2 class="main-title">Proprietary Risk Score</h2>
+                <p class="subtitle">SequestOne assessment</p>
             </div>
-        }
-        else if (Model != null && Model.IsProcessed)
-        {
-            <div class="text-center flex-grow-1 d-flex flex-column justify-content-center">
-                <div class="row">
+
+            <!-- Main Gauge Section -->
+            <div class="gauge-section">
+                <div class="gauge-row">
                     <!-- Risk Score Gauge -->
-                    <div class="col-md-6 mb-3">
-                        <div class="gauge-container">
-                            <svg viewBox="0 0 200 120" class="gauge-svg">
+                    <div class="gauge-container">
+                        <div class="gauge-wrapper">
+                            <svg viewBox="0 0 200 140" class="gauge-svg">
                                 <!-- Background arc -->
-                                <path d="M 20 100 A 80 80 0 0 1 180 100" 
-                                      stroke="#e9ecef" 
-                                      stroke-width="20" 
+                                <path d="M 30 110 A 70 70 0 0 1 170 110" 
+                                      stroke="#f1f5f9" 
+                                      stroke-width="12" 
                                       fill="none" 
                                       stroke-linecap="round"/>
                                 
-                                <!-- Score arc -->
-                                <path d="M 20 100 A 80 80 0 0 1 180 100" 
+                                <!-- Animated progress arc -->
+                                <path d="M 30 110 A 70 70 0 0 1 170 110" 
                                       stroke="@GetGaugeColor(Model.Score)" 
-                                      stroke-width="20" 
+                                      stroke-width="12" 
                                       fill="none" 
                                       stroke-linecap="round"
                                       stroke-dasharray="@GetDashArray(Model.Score)"
                                       stroke-dashoffset="0"
-                                      class="gauge-progress"/>
+                                      class="gauge-progress-arc"/>
                                 
-                                <!-- Score text -->
-                                <text x="100" y="85" text-anchor="middle" class="gauge-score">@Model.Score</text>
-                                <text x="100" y="105" text-anchor="middle" class="gauge-risk">@Model.RiskCategory</text>
+                                <!-- Center content -->
+                                <text x="100" y="90" text-anchor="middle" class="gauge-score-text">@Model.Score</text>
+                                <text x="100" y="115" text-anchor="middle" class="gauge-category-text">@Model.RiskCategory.ToUpper()</text>
+                                <text x="100" y="135" text-anchor="middle" class="gauge-description-text">Risk Level</text>
                             </svg>
                         </div>
-                        <div class="gauge-title">Risk Score</div>
+                        <h3 class="gauge-title">Risk Score</h3>
                     </div>
 
                     <!-- Residual Disease Gauge -->
-                    <div class="col-md-6 mb-3">
-                        <div class="gauge-container">
-                            <svg viewBox="0 0 200 120" class="gauge-svg">
+                    <div class="gauge-container">
+                        <div class="gauge-wrapper">
+                            <svg viewBox="0 0 200 140" class="gauge-svg">
                                 <!-- Background arc -->
-                                <path d="M 20 100 A 80 80 0 0 1 180 100" 
-                                      stroke="#e9ecef" 
-                                      stroke-width="20" 
+                                <path d="M 30 110 A 70 70 0 0 1 170 110" 
+                                      stroke="#f1f5f9" 
+                                      stroke-width="12" 
                                       fill="none" 
                                       stroke-linecap="round"/>
                                 
-                                <!-- Score arc -->
-                                <path d="M 20 100 A 80 80 0 0 1 180 100" 
+                                <!-- Animated progress arc -->
+                                <path d="M 30 110 A 70 70 0 0 1 170 110" 
                                       stroke="@GetGaugeColor(Model.ResidualDiseaseScore)" 
-                                      stroke-width="20" 
+                                      stroke-width="12" 
                                       fill="none" 
                                       stroke-linecap="round"
                                       stroke-dasharray="@GetDashArray(Model.ResidualDiseaseScore)"
                                       stroke-dashoffset="0"
-                                      class="gauge-progress"/>
+                                      class="gauge-progress-arc"/>
                                 
-                                <!-- Score text -->
-                                <text x="100" y="85" text-anchor="middle" class="gauge-score">@Model.ResidualDiseaseScore</text>
-                                <text x="100" y="105" text-anchor="middle" class="gauge-risk">@Model.ResidualDiseaseCategory</text>
+                                <!-- Center content -->
+                                <text x="100" y="90" text-anchor="middle" class="gauge-score-text">@Model.ResidualDiseaseScore</text>
+                                <text x="100" y="115" text-anchor="middle" class="gauge-category-text">@Model.ResidualDiseaseCategory.ToUpper()</text>
+                                <text x="100" y="135" text-anchor="middle" class="gauge-description-text">Residual Disease</text>
                             </svg>
                         </div>
-                        <div class="gauge-title">Residual Disease</div>
+                        <h3 class="gauge-title">Residual Disease</h3>
                     </div>
                 </div>
             </div>
-        }
-        else
-        {
-            <div class="d-flex justify-content-center align-items-center flex-grow-1">
-                <div class="text-center">
-                    <i class="fas fa-upload text-muted mb-3" style="font-size: 3rem;"></i>
-                    <h6 class="text-muted">No Data Available</h6>
-                    <p class="text-muted small">Upload RNAseq data to calculate your personalized risk score.</p>
-                </div>
-            </div>
-        }
-    </div>
+        </div>
+    }
+    else
+    {
+        <div class="no-data-container">
+            <div class="no-data-icon">📊</div>
+            <h3 class="no-data-title">No Risk Data Available</h3>
+            <p class="no-data-description">Upload RNAseq data to generate personalized risk assessment</p>
+        </div>
+    }
 </div>
 
 <style>
-    .gauge-container {
-        max-width: 250px;
-        margin: 0 auto;
+    .professional-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        padding: 32px;
+        margin-bottom: 24px;
+        border: 1px solid #f1f5f9;
+        transition: all 0.3s ease;
     }
-    
+
+    .professional-card:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        transform: translateY(-2px);
+    }
+
+    /* Header Section */
+    .card-header-section {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .main-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+        font-size: 16px;
+        color: #64748b;
+        margin: 0;
+        font-weight: 400;
+        letter-spacing: 0.2px;
+    }
+
+    /* Gauge Section */
+    .gauge-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .gauge-row {
+        display: flex;
+        gap: 80px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .gauge-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .gauge-wrapper {
+        width: 220px;
+        height: 160px;
+        max-width: 100%;
+        position: relative;
+        margin-bottom: 20px;
+    }
+
     .gauge-svg {
         width: 100%;
-        height: auto;
+        height: 100%;
     }
-    
-    .gauge-progress {
-        transition: stroke-dasharray 0.3s ease;
+
+    .gauge-progress-arc {
+        transition: stroke-dasharray 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
     }
-    
-    .gauge-score {
-        font-size: 24px;
-        font-weight: bold;
-        fill: #2563eb;
+
+    .gauge-score-text {
+        font-size: 36px;
+        font-weight: 800;
+        fill: #1e293b;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
-    
-    .gauge-risk {
+
+    .gauge-category-text {
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .gauge-description-text {
         font-size: 12px;
-        font-weight: 600;
+        font-weight: 500;
         fill: #64748b;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
     .gauge-title {
-        text-align: center;
+        font-size: 20px;
         font-weight: 600;
+        color: #374151;
+        margin: 0;
+        text-align: center;
+        letter-spacing: -0.2px;
+    }
+
+    /* Loading State */
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+    }
+
+    .loading-spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid #f1f5f9;
+        border-top: 4px solid #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 24px;
+    }
+
+    .loading-text {
+        font-size: 16px;
         color: #64748b;
-        margin-top: 10px;
+        margin: 0;
+        font-weight: 500;
+    }
+
+    /* No Data State */
+    .no-data-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        text-align: center;
+    }
+
+    .no-data-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.6;
+    }
+
+    .no-data-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #374151;
+        margin: 0 0 8px 0;
+    }
+
+    .no-data-description {
         font-size: 14px;
+        color: #64748b;
+        margin: 0;
+        max-width: 300px;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 992px) {
+        .gauge-row {
+            gap: 60px;
+        }
+        
+        .gauge-wrapper {
+            width: 200px;
+            height: 140px;
+        }
+        
+        .gauge-score-text {
+            font-size: 32px;
+        }
     }
 
     @@media (max-width: 768px) {
-        .gauge-container {
-            max-width: 200px;
+        .professional-card {
+            padding: 24px;
         }
-        
-        .gauge-score {
-            font-size: 20px;
+
+        .gauge-row {
+            flex-direction: column;
+            gap: 32px;
         }
-        
-        .gauge-risk {
-            font-size: 10px;
+
+        .gauge-wrapper {
+            width: 160px;
+            height: 112px;
+            max-width: 90%;
         }
+
+        .main-title {
+            font-size: 24px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+        }
+
+        .gauge-score-text {
+            font-size: 26px;
+        }
+
+        .gauge-title {
+            font-size: 16px;
+        }
+    }
+
+    @@keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
 </style>
 
@@ -154,15 +317,15 @@
 
     private string GetGaugeColor(int score) => score switch
     {
-        <= 33 => "#57ec7f", // Green for low risk
-        <= 66 => "#ff9500", // Orange for moderate risk
-        _ => "#de5353"      // Red for high risk
+        <= 33 => "#10b981", // Green for low risk
+        <= 66 => "#f59e0b", // Orange for moderate risk
+        _ => "#ef4444"      // Red for high risk
     };
 
     private string GetDashArray(int score)
     {
-        // Half circle circumference is approximately 251.33 (π * 80)
-        double circumference = Math.PI * 80;
+        // Semicircle circumference is approximately 219.91 (π * 70)
+        double circumference = Math.PI * 70;
         double progress = (score / 100.0) * circumference;
         return $"{progress} {circumference}";
     }

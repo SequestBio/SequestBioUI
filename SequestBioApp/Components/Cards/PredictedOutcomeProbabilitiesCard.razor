@@ -1,72 +1,287 @@
 @using RiskCalculator.Models.Cards
 @using RiskCalculator.Services.Cards
 
-<div class="card mb-4">
-    <div class="card-header">
-        <h5>
-            <i class="fas fa-chart-line me-2"></i>
-            Predicted Outcome Probabilities
-        </h5>
-    </div>
-    <div class="card-body">
-        @if (IsLoading)
-        {
-            <div class="text-center">
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
+<div class="professional-card">
+    @if (IsLoading)
+    {
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Loading outcome predictions...</p>
+        </div>
+    }
+    else if (Data != null)
+    {
+        <div class="card-content">
+            <!-- Header Section -->
+            <div class="card-header-section">
+                <h2 class="main-title">Predicted Outcome Probabilities</h2>
+                <p class="subtitle">Survival analysis and prognosis</p>
             </div>
-        }
-        else if (Data != null)
-        {
-            <div class="row">
-                <!-- Survival Curves -->
-                <div class="col-md-6">
-                    <h6 class="text-muted">5-Year Recurrence-Free Survival (RFS)</h6>
-                    <div class="chart-container mb-3">
-                        <small class="text-muted">5-year RFS: @((Data.FiveYearSurvival * 100).ToString("F1"))%</small>
-                        <div class="progress mt-2">
-                            <div class="progress-bar bg-success" style="width: @(Data.FiveYearSurvival * 100)%"></div>
+
+            <!-- Survival Data Section -->
+            <div class="survival-section">
+                <div class="survival-row">
+                    <!-- 5-Year Survival -->
+                    <div class="survival-item">
+                        <div class="survival-label">5-Year RFS</div>
+                        <div class="survival-value">@((Data.FiveYearSurvival * 100).ToString("F1"))%</div>
+                        <div class="survival-bar">
+                            <div class="survival-progress" style="width: @(Data.FiveYearSurvival * 100)%"></div>
+                        </div>
+                    </div>
+
+                    <!-- 10-Year Survival -->
+                    <div class="survival-item">
+                        <div class="survival-label">10-Year RFS</div>
+                        <div class="survival-value">@((Data.TenYearSurvival * 100).ToString("F1"))%</div>
+                        <div class="survival-bar">
+                            <div class="survival-progress" style="width: @(Data.TenYearSurvival * 100)%"></div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <h6 class="text-muted">10-Year Recurrence-Free Survival (RFS)</h6>
-                    <div class="chart-container mb-3">
-                        <small class="text-muted">10-year RFS: @((Data.TenYearSurvival * 100).ToString("F1"))%</small>
-                        <div class="progress mt-2">
-                            <div class="progress-bar bg-info" style="width: @(Data.TenYearSurvival * 100)%"></div>
-                        </div>
+
+                <!-- Additional Metrics -->
+                <div class="metrics-section">
+                    <div class="metric-item">
+                        <span class="metric-label">Median Survival</span>
+                        <span class="metric-value">@Data.MedianSurvivalMonths.ToString("F1") months</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Confidence Interval (5-year RFS)</span>
+                        <span class="metric-value">@((Data.ConfidenceInterval.Lower * 100).ToString("F1"))% - @((Data.ConfidenceInterval.Upper * 100).ToString("F1"))%</span>
                     </div>
                 </div>
             </div>
-            <div class="row mt-4">
-                <div class="col-12">
-                    <h6 class="text-muted">Median Survival</h6>
-                    <div class="d-flex align-items-center">
-                        <span class="badge bg-secondary me-2">@Data.MedianSurvivalMonths.ToString("F1") months</span>
-                        <span class="text-muted">(Median time to event)</span>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-4">
-                <div class="col-12">
-                    <h6 class="text-muted">Confidence Interval (5-year RFS)</h6>
-                    <span class="badge bg-light text-dark">
-                        @((Data.ConfidenceInterval.Lower * 100).ToString("F1"))% - @((Data.ConfidenceInterval.Upper * 100).ToString("F1"))%
-                    </span>
-                </div>
-            </div>
-        }
-        else
-        {
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle me-2"></i>
-                No prediction data available. Please ensure patient data and genomic analysis are complete.
-            </div>
-        }
-    </div>
+        </div>
+    }
+    else
+    {
+        <div class="no-data-container">
+            <div class="no-data-icon">📊</div>
+            <h3 class="no-data-title">No Prediction Data Available</h3>
+            <p class="no-data-description">Complete risk analysis to see outcome predictions</p>
+        </div>
+    }
 </div>
+
+<style>
+    .professional-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        padding: 32px;
+        margin-bottom: 24px;
+        border: 1px solid #f1f5f9;
+        transition: all 0.3s ease;
+    }
+
+    .professional-card:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        transform: translateY(-2px);
+    }
+
+    /* Header Section */
+    .card-header-section {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .main-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+        font-size: 16px;
+        color: #64748b;
+        margin: 0;
+        font-weight: 400;
+        letter-spacing: 0.2px;
+    }
+
+    /* Survival Section */
+    .survival-section {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+    }
+
+    .survival-row {
+        display: flex;
+        gap: 32px;
+        justify-content: center;
+    }
+
+    .survival-item {
+        flex: 1;
+        max-width: 200px;
+        text-align: center;
+    }
+
+    .survival-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .survival-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 12px;
+    }
+
+    .survival-bar {
+        width: 100%;
+        height: 8px;
+        background: #f1f5f9;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .survival-progress {
+        height: 100%;
+        background: linear-gradient(90deg, #10b981, #059669);
+        border-radius: 4px;
+        transition: width 1s ease;
+    }
+
+    /* Metrics Section */
+    .metrics-section {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 24px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .metric-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .metric-item:last-child {
+        border-bottom: none;
+    }
+
+    .metric-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #64748b;
+    }
+
+    .metric-value {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    /* Loading State */
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+    }
+
+    .loading-spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid #f1f5f9;
+        border-top: 4px solid #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 24px;
+    }
+
+    .loading-text {
+        font-size: 16px;
+        color: #64748b;
+        margin: 0;
+        font-weight: 500;
+    }
+
+    /* No Data State */
+    .no-data-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        text-align: center;
+    }
+
+    .no-data-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.6;
+    }
+
+    .no-data-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #374151;
+        margin: 0 0 8px 0;
+    }
+
+    .no-data-description {
+        font-size: 14px;
+        color: #64748b;
+        margin: 0;
+        max-width: 300px;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .professional-card {
+            padding: 24px;
+        }
+
+        .survival-row {
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .survival-item {
+            max-width: none;
+        }
+
+        .main-title {
+            font-size: 24px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+        }
+
+        .survival-value {
+            font-size: 28px;
+        }
+
+        .metric-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+        }
+    }
+
+    @@keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
 
 @code {
     [Parameter] public bool IsLoading { get; set; } = false;

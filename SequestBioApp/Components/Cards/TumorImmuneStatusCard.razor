@@ -1,113 +1,391 @@
 @using RiskCalculator.Models.Cards
 @using RiskCalculator.Services.Cards
 
-<div class="card">
-    <div class="card-header">
-        <h5>
-            <i class="fas fa-fire me-2"></i>
-            Tumor Immune Status
-        </h5>
-    </div>
-    <div class="card-body">
-        <h6 class="text-muted mb-4">Hot vs Cold Tumor Classification</h6>
+<div class="professional-card">
+    @if (IsLoading)
+    {
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Analyzing immune status...</p>
+        </div>
+    }
+    else if (Model != null && Model.IsAnalysisComplete)
+    {
+        <div class="card-content">
+            <!-- Header Section -->
+            <div class="card-header-section">
+                <h2 class="main-title">Tumor Immune Status</h2>
+                <p class="subtitle">Hot vs Cold tumor classification</p>
+            </div>
 
-        @if (Model != null && Model.IsAnalysisComplete)
-        {
-            <div class="text-center">
-                <!-- Gauge Container -->
-                <div class="immune-gauge-container">
-                    <svg viewBox="0 0 300 220" class="immune-gauge-svg">
-                        <!-- Gradient Definition -->
-                        <defs>
-                            <linearGradient id="immuneGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" style="stop-color:#87ceeb;stop-opacity:1" />
-                                <stop offset="50%" style="stop-color:#ffd700;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#ff6b6b;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        
-                        <!-- Background arc -->
-                        <path d="M 50 150 A 100 100 0 0 1 250 150" 
-                              stroke="#e9ecef" 
-                              stroke-width="20" 
-                              fill="none" 
-                              stroke-linecap="round"/>
-                        
-                        <!-- Gradient arc -->
-                        <path d="M 50 150 A 100 100 0 0 1 250 150" 
-                              stroke="url(#immuneGradient)" 
-                              stroke-width="20" 
-                              fill="none" 
-                              stroke-linecap="round"/>
-                        
-                        <!-- Pointer -->
-                        <g transform="rotate(@GetPointerRotation(Model.TumorHotColdScore) 150 150)">
-                            <line x1="150" y1="150" x2="150" y2="70" 
-                                  stroke="#2c3e50" 
-                                  stroke-width="4" 
-                                  stroke-linecap="round"/>
-                            <circle cx="150" cy="150" r="10" fill="#2c3e50"/>
-                            <polygon points="150,65 156,76 144,76" fill="#2c3e50"/>
-                        </g>
-                        
-                        <!-- Labels -->
-                        <text x="70" y="170" text-anchor="middle" class="gauge-label">Cold</text>
-                        <text x="230" y="170" text-anchor="middle" class="gauge-label">Hot</text>
-                        
-                        <!-- Score display -->
-                        <text x="150" y="200" text-anchor="middle" class="gauge-score">@Model.TumorHotColdScore%</text>
-                    </svg>
+            <!-- Main Slider Section -->
+            <div class="slider-section">
+                <div class="status-container">
+                    <div class="status-track"></div>
+                    <div class="status-indicator" style="left: @GetIndicatorPosition(Model.TumorHotColdScore)%;"></div>
+                </div>
+                
+                <div class="status-labels">
+                    <div class="status-label">
+                        <div class="label-title">COLD</div>
+                        <div class="label-description">Low immune activity</div>
+                    </div>
+                    <div class="status-label">
+                        <div class="label-title">MODERATE</div>
+                        <div class="label-description">Mixed immune response</div>
+                    </div>
+                    <div class="status-label">
+                        <div class="label-title">HOT</div>
+                        <div class="label-description">High immune activity</div>
+                    </div>
+                </div>
+                
+                <div class="current-status">
+                    <div class="status-value">@Model.TumorHotColdScore</div>
+                    <div class="status-classification @GetStatusClass(Model.TumorHotColdScore)">@GetStatusLabel(Model.TumorHotColdScore) Tumor</div>
+                    <div class="status-description">Immune infiltration score</div>
                 </div>
             </div>
-        }
-        else
-        {
-            <div class="text-center py-4">
-                <i class="fas fa-fire fa-2x text-muted mb-2"></i>
-                <p class="text-muted">
-                    Upload RNAseq data to analyze immune status.
-                </p>
-            </div>
-        }
-    </div>
+        </div>
+    }
+    else
+    {
+        <div class="no-data-container">
+            <div class="no-data-icon">🔥</div>
+            <h3 class="no-data-title">No Immune Data Available</h3>
+            <p class="no-data-description">Upload RNAseq data to analyze tumor immune status</p>
+        </div>
+    }
 </div>
 
 <style>
-    .immune-gauge-container {
-        max-width: 300px;
-        margin: 0 auto;
-        padding: 20px 0;
-    }
-    
-    .immune-gauge-svg {
+    .professional-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        padding: 32px;
+        margin-bottom: 24px;
+        border: 1px solid #f1f5f9;
+        transition: all 0.3s ease;
         width: 100%;
-        height: auto;
     }
-    
-    .gauge-label {
-        font-size: 16px;
+
+    .professional-card:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        transform: translateY(-2px);
+    }
+
+    /* Header Section */
+    .card-header-section {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .main-title {
+        font-size: 28px;
         font-weight: 600;
-        fill: #64748b;
+        color: #1e293b;
+        margin-bottom: 8px;
+        letter-spacing: -0.02em;
     }
-    
-    .gauge-score {
-        font-size: 24px;
-        font-weight: bold;
-        fill: #2c3e50;
+
+    .subtitle {
+        font-size: 16px;
+        color: #64748b;
+        margin: 0;
+        font-weight: 400;
     }
-    
+
+    /* Slider Section */
+    .slider-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .status-container {
+        position: relative;
+        width: 100%;
+        height: 60px;
+        margin: 24px 0 16px 0;
+        background: linear-gradient(90deg, #e0f2fe 0%, #fef3c7 50%, #fef3c7 100%);
+        border-radius: 16px;
+        overflow: hidden;
+        border: 2px solid #e2e8f0;
+    }
+
+    .status-track {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, 
+            #bae6fd 0%, 
+            #e0f2fe 25%, 
+            #fef3c7 50%, 
+            #fde68a 75%, 
+            #fbbf24 100%);
+    }
+
+    .status-indicator {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 44px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        border: 2px solid #1e293b;
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .status-indicator::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 6px;
+        height: 6px;
+        background: #1e293b;
+        border-radius: 50%;
+    }
+
+    .status-labels {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 20px;
+        padding: 0 16px;
+    }
+
+    .status-label {
+        text-align: center;
+        flex: 1;
+    }
+
+    .label-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    .label-description {
+        font-size: 12px;
+        color: #64748b;
+        line-height: 1.4;
+    }
+
+    .current-status {
+        text-align: center;
+        padding: 20px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        width: 100%;
+    }
+
+    .status-value {
+        font-size: 36px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+    }
+
+    .status-classification {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 3px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    .status-description {
+        font-size: 12px;
+        color: #64748b;
+        line-height: 1.4;
+    }
+
+    /* Status Color Classes */
+    .cold-status {
+        color: #0ea5e9;
+    }
+
+    .moderate-status {
+        color: #eab308;
+    }
+
+    .hot-status {
+        color: #f59e0b;
+    }
+
+    /* Loading State */
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+    }
+
+    .loading-spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid #f1f5f9;
+        border-top: 4px solid #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 24px;
+    }
+
+    .loading-text {
+        font-size: 16px;
+        color: #64748b;
+        margin: 0;
+        font-weight: 500;
+    }
+
+    /* No Data State */
+    .no-data-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        text-align: center;
+    }
+
+    .no-data-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.6;
+    }
+
+    .no-data-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #374151;
+        margin: 0 0 8px 0;
+    }
+
+    .no-data-description {
+        font-size: 14px;
+        color: #64748b;
+        margin: 0;
+        max-width: 300px;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 992px) {
+        .professional-card {
+            padding: 28px;
+        }
+
+        .status-container {
+            height: 56px;
+            margin: 20px 0 14px 0;
+        }
+
+        .status-indicator {
+            width: 18px;
+            height: 40px;
+        }
+
+        .status-value {
+            font-size: 32px;
+        }
+    }
+
     @@media (max-width: 768px) {
-        .immune-gauge-container {
-            max-width: 250px;
+        .professional-card {
+            padding: 24px;
+            border-radius: 16px;
         }
-        
-        .gauge-score {
-            font-size: 20px;
+
+        .main-title {
+            font-size: 24px;
         }
-        
-        .gauge-label {
+
+        .subtitle {
             font-size: 14px;
         }
+
+        .status-container {
+            height: 60px;
+            margin: 30px 0 15px 0;
+        }
+
+        .status-indicator {
+            width: 20px;
+            height: 44px;
+            border-radius: 10px;
+        }
+
+        .status-indicator::before {
+            width: 6px;
+            height: 6px;
+        }
+
+        .status-labels {
+            padding: 0 10px;
+        }
+
+        .label-title {
+            font-size: 12px;
+        }
+
+        .label-description {
+            font-size: 10px;
+        }
+
+        .status-value {
+            font-size: 36px;
+        }
+
+        .status-classification {
+            font-size: 14px;
+        }
+
+        .status-description {
+            font-size: 12px;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .professional-card {
+            padding: 20px;
+        }
+
+        .status-container {
+            height: 50px;
+            margin: 20px 0 10px 0;
+        }
+
+        .status-indicator {
+            width: 16px;
+            height: 36px;
+            border-radius: 8px;
+        }
+
+        .status-value {
+            font-size: 32px;
+        }
+
+        .current-status {
+            padding: 20px;
+        }
+    }
+
+    @@keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
 </style>
 
@@ -115,10 +393,24 @@
     [Parameter] public TumorImmuneStatusModel? Model { get; set; }
     [Parameter] public bool IsLoading { get; set; } = false;
 
-    private double GetPointerRotation(int score)
+    private double GetIndicatorPosition(int score)
     {
-        // Convert 0-100 score to -90 to +90 degrees rotation
-        // 0 = -90 degrees (Cold), 50 = 0 degrees (center), 100 = +90 degrees (Hot)
-        return (score - 50) * 1.8; // 1.8 = 180/100 for full semicircle range
+        // Convert 0-100 score to 0-100% position with some padding
+        // Add 5% padding on each side, so effective range is 5% to 95%
+        return Math.Max(5, Math.Min(95, score * 0.9 + 5));
     }
+
+    private string GetStatusLabel(int score) => score switch
+    {
+        <= 35 => "Cold",
+        <= 65 => "Moderate",
+        _ => "Hot"
+    };
+
+    private string GetStatusClass(int score) => score switch
+    {
+        <= 35 => "cold-status",
+        <= 65 => "moderate-status", 
+        _ => "hot-status"
+    };
 } 
