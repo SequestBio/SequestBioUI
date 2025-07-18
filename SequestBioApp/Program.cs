@@ -5,14 +5,17 @@ using RiskCalculator.Services.RiskScore;
 using RiskCalculator.Services.Tumor;
 using RiskCalculator.Services.Cards;
 using SequestBioApp.Components;
+using SequestBioApp.Services.UI;
 using Radzen;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Core services
 builder.Services.AddScoped<SequestoneScoreService>();
 builder.Services.AddScoped<TumorFeatureService>();
+
+// UI services
+builder.Services.AddScoped<SidebarService>();
 
 // Card services - register all interfaces with their implementations
 builder.Services.AddScoped<IProprietaryRiskScoreService, ProprietaryRiskScoreService>();

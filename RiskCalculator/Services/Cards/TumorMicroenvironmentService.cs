@@ -4,7 +4,7 @@ using SequestBioAI.Data;
 namespace RiskCalculator.Services.Cards;
 
 /// <summary>
-/// Service for analyzing tumor microenvironment (Scientists: Replace with real TME calculations)
+/// Service for analyzing tumor microenvironment
 /// </summary>
 public class TumorMicroenvironmentService : ITumorMicroenvironmentService
 {
@@ -14,10 +14,10 @@ public class TumorMicroenvironmentService : ITumorMicroenvironmentService
     {
         try
         {
-            // TODO: Scientists - Replace this entire method with real TME analysis
+            // TODO: Replace this entire method with real TME analysis
             // For now, return mock data directly
             await Task.Delay(1); // Simulate processing time
-            
+
             return new TumorMicroenvironmentModel
             {
                 GenomicInstability = _random.Next(20, 80),

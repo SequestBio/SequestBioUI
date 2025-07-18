@@ -7,7 +7,6 @@ namespace RiskCalculator.Services.RiskScore;
 
 /// <summary>
 /// Service that calculates a Sequestone Score for a given patient.
-/// This can be extended later to incorporate real AI or quantum model results.
 /// </summary>
 public class SequestoneScoreService
 {
@@ -27,29 +26,29 @@ public class SequestoneScoreService
     {
         try
         {
-            Console.WriteLine("🔍 SequestoneScoreService: Starting score calculation...");
-            Console.WriteLine($"📊 Stream length: {tsvFileStream.Length}, Position: {tsvFileStream.Position}");
+            Console.WriteLine("SequestoneScoreService: Starting score calculation...");
+            Console.WriteLine($"Stream length: {tsvFileStream.Length}, Position: {tsvFileStream.Position}");
             
-            // Calculate risk score and get contributors
-            var (score, topContributors, allContributors) = await RiskScoreCalculator.CalculateRiskWithContributors(tsvFileStream);
-            
-            Console.WriteLine($"📈 Calculated score: {score}");
-            Console.WriteLine($"🧬 Top contributors: {topContributors.Count}");
-            Console.WriteLine($"🧬 All contributors: {allContributors.Count}");
+        // Calculate risk score and get contributors
+        var (score, topContributors, allContributors) = await RiskScoreCalculator.CalculateRiskWithContributors(tsvFileStream);
+
+            Console.WriteLine($"Calculated score: {score}");
+            Console.WriteLine($"Top contributors: {topContributors.Count}");
+            Console.WriteLine($"All contributors: {allContributors.Count}");
 
             var category = score switch
-            {
+        {
                 > 66 => "High Risk",
                 > 33 => "Moderate Risk",
                 _ => "Low Risk"
-            };
+        };
 
             var recommendation = category switch
-            {
-                "High Risk" => "Initiate aggressive therapy and monitor closely.",
-                "Moderate Risk" => "Consider standard of care with added monitoring.",
-                _ => "Low risk. Continue with standard protocols."
-            };
+        {
+            "High Risk" => "Initiate aggressive therapy and monitor closely.",
+            "Moderate Risk" => "Consider standard of care with added monitoring.",
+            _ => "Low risk. Continue with standard protocols."
+        };
 
             // Calculate confidence based on contributing factors
             var confidence = CalculateConfidence(score, allContributors.Count);
@@ -64,26 +63,26 @@ public class SequestoneScoreService
             };
 
             var result = new ProprietaryRiskScoreModel
-            {
-                Score = score,
-                RiskCategory = category,
-                Recommendation = recommendation,
-                Confidence = confidence,
+        {
+            Score = score,
+            RiskCategory = category,
+            Recommendation = recommendation,
+            Confidence = confidence,
                 ResidualDiseaseScore = residualScore,
                 ResidualDiseaseCategory = residualCategory,
                 IsProcessed = true,
                 CalculatedAt = DateTime.Now
             };
             
-            Console.WriteLine($"✅ SequestoneScoreService: Score calculation completed successfully");
-            Console.WriteLine($"📊 Final result: Score={result.Score}, Category={result.RiskCategory}, Confidence={result.Confidence}");
+            Console.WriteLine($"SequestoneScoreService: Score calculation completed successfully");
+            Console.WriteLine($"Final result: Score={result.Score}, Category={result.RiskCategory}, Confidence={result.Confidence}");
             
             return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"❌ SequestoneScoreService: Error calculating score: {ex.Message}");
-            Console.WriteLine($"❌ Stack trace: {ex.StackTrace}");
+            Console.WriteLine($"SequestoneScoreService: Error calculating score: {ex.Message}");
+            Console.WriteLine($"Stack trace: {ex.StackTrace}");
             
             // Return a default model instead of throwing
             return new ProprietaryRiskScoreModel
@@ -123,12 +122,11 @@ public class SequestoneScoreService
 
     /// <summary>
     /// Generate residual disease score (temporary random implementation)
-    /// Scientists: Replace this with actual residual disease calculation
     /// </summary>
     /// <returns>Residual disease score (0-100)</returns>
     private int GenerateResidualDiseaseScore()
     {
-        // TODO: Scientists - implement actual residual disease calculation
+        // TODO: implement actual residual disease calculation
         // For now, generate a random score between 0-100
         var random = new Random();
         return random.Next(0, 101);

@@ -1,4 +1,8 @@
 /* SequestBio Application Styles */
+
+/* Import Inter font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 :root {
     --primary-color: #2563eb;
     --secondary-color: #64748b;
@@ -14,14 +18,37 @@
     --card-border: #e2e8f0;
     --tier-spacing: 3rem;
     --card-spacing: 1.5rem;
+    --sidebar-width: 280px;
 }
 
 /* Global Styles */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: #f8fafc;
     color: #334155;
     line-height: 1.5;
+}
+
+/* ======================
+   SIDEBAR INTEGRATION
+   ====================== */
+
+/* Ensure main content area respects sidebar */
+.main-content-area {
+    margin-left: var(--sidebar-width);
+    transition: margin-left 0.3s ease;
+    min-height: 100vh;
+}
+
+.main-content-area.sidebar-hidden {
+    margin-left: 0;
+}
+
+/* Responsive sidebar adjustments */
+@media (max-width: 768px) {
+    .main-content-area {
+        margin-left: 0 !important;
+    }
 }
 
 /* ======================
@@ -261,7 +288,7 @@ body {
     .tier-critical .card {
         transform: none;
     }
-    
+
     .tier-1 .critical-card .card {
         min-height: 300px;
     }
@@ -293,7 +320,7 @@ body {
         margin-bottom: 1.5rem;
         padding: 0.5rem 0;
     }
-    
+
     .tier-title {
         font-size: 1.25rem;
     }
@@ -706,6 +733,10 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--danger-color) !important;
 }
 
+.text-info {
+    color: var(--info-color) !important;
+}
+
 /* SequestBio Logo Styling */
 .logo-container {
     display: flex;
@@ -731,8 +762,4 @@ h1, h2, h3, h4, h5, h6 {
     .sequestbio-logo {
         max-width: 220px;
     }
-}
-
-.text-info {
-    color: var(--info-color) !important;
 }

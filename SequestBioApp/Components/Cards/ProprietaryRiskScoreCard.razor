@@ -10,13 +10,13 @@
         </div>
     }
     else if (Model != null && Model.IsProcessed)
-    {
+            {
         <div class="card-content">
             <!-- Header Section -->
             <div class="card-header-section">
                 <h2 class="main-title">Proprietary Risk Score</h2>
                 <p class="subtitle">SequestOne assessment</p>
-            </div>
+                    </div>
 
             <!-- Main Gauge Section -->
             <div class="gauge-section">
@@ -49,7 +49,7 @@
                             </svg>
                         </div>
                         <h3 class="gauge-title">Risk Score</h3>
-                    </div>
+                </div>
 
                     <!-- Residual Disease Gauge -->
                     <div class="gauge-container">
@@ -77,22 +77,22 @@
                                 <text x="100" y="115" text-anchor="middle" class="gauge-category-text">@Model.ResidualDiseaseCategory.ToUpper()</text>
                                 <text x="100" y="135" text-anchor="middle" class="gauge-description-text">Residual Disease</text>
                             </svg>
-                        </div>
+                </div>
                         <h3 class="gauge-title">Residual Disease</h3>
                     </div>
                 </div>
             </div>
         </div>
-    }
-    else
-    {
+                }
+                else
+                {
         <div class="no-data-container">
             <div class="no-data-icon">📊</div>
             <h3 class="no-data-title">No Risk Data Available</h3>
             <p class="no-data-description">Upload RNAseq data to generate personalized risk assessment</p>
         </div>
     }
-</div>
+    </div>
 
 <style>
     .professional-card {

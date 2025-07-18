@@ -5,7 +5,7 @@ using SequestBioAI.RiskScore;
 namespace RiskCalculator.Services.Cards;
 
 /// <summary>
-/// Service for SHAP Waterfall analysis (Scientists: Replace with real SHAP calculations)
+/// Service for SHAP Waterfall analysis
 /// </summary>
 public class ShapWaterfallService : IShapWaterfallService
 {
@@ -18,7 +18,7 @@ public class ShapWaterfallService : IShapWaterfallService
             // Get the actual risk score as final score
             var finalScore = await RiskScoreCalculator.CalculateRiskCategory(tsvFileStream);
             
-            // TODO: Scientists - Replace this entire method with real SHAP analysis
+            // TODO: Replace this entire method with real SHAP analysis
             // For now, generate mock SHAP contributions
             await Task.Delay(1); // Simulate processing time
             
@@ -55,7 +55,7 @@ public class ShapWaterfallService : IShapWaterfallService
 
     /// <summary>
     /// Generate mock SHAP contributions for demonstration
-    /// TODO: Scientists - Replace with real SHAP value calculations
+    /// TODO: Replace with real SHAP value calculations
     /// </summary>
     private List<ShapContribution> GenerateMockShapContributions(double finalScore, double baseScore)
     {

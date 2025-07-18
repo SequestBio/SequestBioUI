@@ -4,7 +4,7 @@ using SequestBioAI.Data;
 namespace RiskCalculator.Services.Cards;
 
 /// <summary>
-/// Service for tabbed insights analysis (Scientists: Replace with real advanced analysis calculations)
+/// Service for tabbed insights analysis
 /// </summary>
 public class TabbedInsightsService : ITabbedInsightsService
 {
@@ -12,7 +12,7 @@ public class TabbedInsightsService : ITabbedInsightsService
 
     public Task<TabbedInsightsModel> GetTabbedInsightsAsync(string patientId, double? riskScore)
     {
-        // TODO: Scientists - This method is not currently used but may be needed for future database-based lookups
+        // TODO: This method is not currently used but may be needed for future database-based lookups
         return Task.FromResult(new TabbedInsightsModel
         {
             PathwayAnalysis = new PathwayAnalysisModel { IsAnalysisComplete = false },
@@ -27,7 +27,7 @@ public class TabbedInsightsService : ITabbedInsightsService
     {
         try
         {
-            // TODO: Scientists - Replace this entire method with real comprehensive analysis
+            // TODO: Replace this entire method with real comprehensive analysis
             // For now, return mock data directly
             await Task.Delay(50); // Simulate processing time
             

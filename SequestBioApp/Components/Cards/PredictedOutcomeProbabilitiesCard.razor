@@ -2,15 +2,15 @@
 @using RiskCalculator.Services.Cards
 
 <div class="professional-card">
-    @if (IsLoading)
-    {
+        @if (IsLoading)
+        {
         <div class="loading-container">
             <div class="loading-spinner"></div>
             <p class="loading-text">Loading outcome predictions...</p>
-        </div>
-    }
-    else if (Data != null)
-    {
+            </div>
+        }
+        else if (Data != null)
+        {
         <div class="card-content">
             <!-- Header Section -->
             <div class="card-header-section">
@@ -45,24 +45,24 @@
                     <div class="metric-item">
                         <span class="metric-label">Median Survival</span>
                         <span class="metric-value">@Data.MedianSurvivalMonths.ToString("F1") months</span>
-                    </div>
+            </div>
                     <div class="metric-item">
                         <span class="metric-label">Confidence Interval (5-year RFS)</span>
                         <span class="metric-value">@((Data.ConfidenceInterval.Lower * 100).ToString("F1"))% - @((Data.ConfidenceInterval.Upper * 100).ToString("F1"))%</span>
                     </div>
                 </div>
+                </div>
             </div>
-        </div>
-    }
-    else
-    {
+        }
+        else
+        {
         <div class="no-data-container">
             <div class="no-data-icon">📊</div>
             <h3 class="no-data-title">No Prediction Data Available</h3>
             <p class="no-data-description">Complete risk analysis to see outcome predictions</p>
-        </div>
-    }
-</div>
+            </div>
+        }
+    </div>
 
 <style>
     .professional-card {

@@ -10,13 +10,13 @@
         </div>
     }
     else if (Model != null && Model.IsAnalysisComplete)
-    {
+            {
         <div class="card-content">
             <!-- Header Section -->
             <div class="card-header-section">
                 <h2 class="main-title">Tumor Microenvironment</h2>
                 <p class="subtitle">Composite mutation and immune analysis</p>
-            </div>
+                    </div>
 
             <!-- Main Metrics Section -->
             <div class="metrics-section">
@@ -111,13 +111,13 @@
                     <p class="summary-text">
                         Comprehensive analysis of tumor microenvironment characteristics including mutation burden, 
                         immune infiltration patterns, and cellular heterogeneity based on gene expression signatures.
-                    </p>
+                </p>
                     <div class="analysis-timestamp">
                         <small>Analysis completed: @Model.CalculatedAt.ToString("MMM dd, yyyy HH:mm")</small>
                     </div>
                 </div>
-            </div>
-        </div>
+                    </div>
+                </div>
     }
     else
     {
@@ -125,9 +125,9 @@
             <div class="no-data-icon">🧬</div>
             <h3 class="no-data-title">No Microenvironment Data</h3>
             <p class="no-data-description">Upload RNAseq data to analyze tumor microenvironment</p>
+                </div>
+            }
         </div>
-    }
-</div>
 
 <style>
     .professional-card {

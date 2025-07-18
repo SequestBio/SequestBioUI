@@ -6,7 +6,6 @@ namespace SequestBioAI.RiskScore;
 
 /// <summary>
 /// Comprehensive risk score calculator that provides analysis for all card types
-/// Scientists: This is the main calculation engine - modify algorithms here
 /// </summary>
 public static class RiskScoreCalculator
 {
@@ -156,7 +155,7 @@ public static class RiskScoreCalculator
 
     /// <summary>
     /// Comprehensive analysis method for all card calculations
-    /// Scientists: This is the main entry point for all analysis
+    /// This is the main entry point for all analysis
     /// </summary>
     public static async Task<ComprehensiveAnalysisResult> PerformComprehensiveAnalysis(Stream tsvFileStream)
     {
@@ -235,7 +234,7 @@ public static class RiskScoreCalculator
 
     private static int CalculateConfidence(int score, PatientData patient)
     {
-        // Scientists: Enhance this confidence calculation
+        // Enhance this confidence calculation
         int baseConfidence = 70;
         int contributorBonus = Math.Min(patient.TumorFeatures.Count * 2, 20);
         int scoreAdjustment = score switch
@@ -254,7 +253,7 @@ public static class RiskScoreCalculator
        ------------------------------------------------------------------*/
     private static void CalculateTumorMicroenvironment(ComprehensiveAnalysisResult result, PatientData patient)
     {
-        // Scientists: Replace with real TME calculations
+        // Replace with real TME calculations
         var random = new Random();
         
         result.GenomicInstability = random.Next(20, 80);
@@ -270,7 +269,7 @@ public static class RiskScoreCalculator
        ------------------------------------------------------------------*/
     private static void CalculateImmuneStatus(ComprehensiveAnalysisResult result, PatientData patient)
     {
-        // Scientists: Replace with real immune status calculations
+        // Replace with real immune status calculations
         var random = new Random();
         
         result.TumorHotColdScore = random.Next(30, 85);
@@ -289,7 +288,7 @@ public static class RiskScoreCalculator
        ------------------------------------------------------------------*/
     private static void CalculateSurvivalPredictions(ComprehensiveAnalysisResult result, PatientData patient)
     {
-        // Scientists: Replace with real survival models
+        // Replace with real survival models
         var riskMultiplier = result.RiskScore / 100.0;
         var baseSurvival = 0.85 - (riskMultiplier * 0.3);
         
@@ -303,7 +302,7 @@ public static class RiskScoreCalculator
        ------------------------------------------------------------------*/
     private static void CalculatePathwayAnalysis(ComprehensiveAnalysisResult result, PatientData patient)
     {
-        // Scientists: Replace with real pathway analysis
+        // Replace with real pathway analysis
         result.PathwayScores = new Dictionary<string, double>
         {
             { "Proliferation", 0.85 },
@@ -325,7 +324,7 @@ public static class RiskScoreCalculator
        ------------------------------------------------------------------*/
     private static void CalculateTreatmentResponses(ComprehensiveAnalysisResult result, PatientData patient)
     {
-        // Scientists: Replace with real treatment response models
+        // Replace with real treatment response models
         result.ChemoResponses = new List<ChemoResponse>
         {
             new ChemoResponse { Agent = "Doxorubicin", ResponseLevel = "High", Confidence = 0.85 },
@@ -342,7 +341,7 @@ public static class RiskScoreCalculator
        ------------------------------------------------------------------*/
     private static void CalculatePerformanceMetrics(ComprehensiveAnalysisResult result, PatientData patient)
     {
-        // Scientists: Replace with real performance metrics
+        // Replace with real performance metrics
         result.PerformanceMetrics = new Dictionary<string, double>
         {
             { "AUC", 0.85 },

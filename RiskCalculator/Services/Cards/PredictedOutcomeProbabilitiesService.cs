@@ -5,7 +5,7 @@ using SequestBioAI.RiskScore;
 namespace RiskCalculator.Services.Cards;
 
 /// <summary>
-/// Service for predicting outcome probabilities (Scientists: Replace with real survival calculations)
+/// Service for predicting outcome probabilities
 /// </summary>
 public class PredictedOutcomeProbabilitiesService : IPredictedOutcomeProbabilitiesService
 {
@@ -18,7 +18,7 @@ public class PredictedOutcomeProbabilitiesService : IPredictedOutcomeProbabiliti
             // Get real risk score to inform survival predictions
             var riskScore = await RiskScoreCalculator.CalculateRiskCategory(tsvFileStream);
             
-            // TODO: Scientists - Replace this entire method with real survival modeling
+            // TODO: Replace this entire method with real survival modeling
             // For now, return mock data based on risk score
             await Task.Delay(1); // Simulate processing time
             

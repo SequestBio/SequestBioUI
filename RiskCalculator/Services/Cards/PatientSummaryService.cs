@@ -4,7 +4,7 @@ using SequestBioAI.Data;
 namespace RiskCalculator.Services.Cards;
 
 /// <summary>
-/// Service for processing patient summary data (Scientists: Modify clinical analysis here)
+/// Service for processing patient summary data
 /// </summary>
 public class PatientSummaryService : IPatientSummaryService
 {
@@ -24,7 +24,7 @@ public class PatientSummaryService : IPatientSummaryService
 
     public async Task<List<string>> IdentifyRiskFactorsAsync(ClinicalData clinicalData)
     {
-        // Scientists: Enhance this method to identify more sophisticated risk factors
+        // Enhance this method to identify more sophisticated risk factors
         var riskFactors = new List<string>();
 
         // Basic risk factor identification
@@ -97,7 +97,7 @@ public class PatientSummaryService : IPatientSummaryService
 
     public async Task<string> GenerateClinicalSummaryAsync(ClinicalData clinicalData)
     {
-        // Scientists: Enhance this method to generate more comprehensive clinical summaries
+        // Enhance this method to generate more comprehensive clinical summaries
         if (string.IsNullOrEmpty(clinicalData.FullName))
         {
             return "No clinical data available.";

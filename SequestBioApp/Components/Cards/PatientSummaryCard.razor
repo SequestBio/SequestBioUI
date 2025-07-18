@@ -41,8 +41,8 @@
                         <span class="info-value">@Model.ClinicalInfo.ReportGenerationDate.ToString("MMM dd, yyyy")</span>
                     </div>
                 </div>
-            </div>
-
+                    </div>
+                    
             <!-- Diagnosis Section -->
             <div class="diagnosis-section">
                 <h3 class="section-title">Diagnosis Information</h3>
@@ -79,18 +79,18 @@
             </div>
 
             <!-- Risk Factors Section -->
-            @if (Model.IdentifiedRiskFactors.Any())
-            {
+                    @if (Model.IdentifiedRiskFactors.Any())
+                    {
                 <div class="risk-factors-section">
                     <h3 class="section-title">Identified Risk Factors</h3>
                     <div class="risk-factors-list">
-                        @foreach (var factor in Model.IdentifiedRiskFactors)
-                        {
+                            @foreach (var factor in Model.IdentifiedRiskFactors)
+                            {
                             <div class="risk-factor-item">
                                 <div class="risk-factor-indicator"></div>
                                 <span class="risk-factor-text">@factor</span>
                             </div>
-                        }
+                    }
                     </div>
                 </div>
             }
@@ -106,7 +106,7 @@
 
             <!-- Footer Section -->
             @if (!string.IsNullOrEmpty(Model.ClinicalInfo.ReportingPhysician) || !string.IsNullOrEmpty(Model.ClinicalInfo.Institution))
-            {
+        {
                 <div class="footer-section">
                     @if (!string.IsNullOrEmpty(Model.ClinicalInfo.ReportingPhysician))
                     {
@@ -117,7 +117,7 @@
                         <span class="footer-text">Institution: @Model.ClinicalInfo.Institution</span>
                     }
                 </div>
-            }
+                    }
         </div>
     }
     else
@@ -126,9 +126,9 @@
             <div class="no-data-icon">👤</div>
             <h3 class="no-data-title">No Patient Data Available</h3>
             <p class="no-data-description">Enter patient information to see clinical summary</p>
-        </div>
-    }
-</div>
+            </div>
+        }
+    </div>
 
 <style>
     .professional-card {

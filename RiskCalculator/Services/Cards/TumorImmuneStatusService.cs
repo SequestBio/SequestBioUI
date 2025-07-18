@@ -4,7 +4,7 @@ using SequestBioAI.Data;
 namespace RiskCalculator.Services.Cards;
 
 /// <summary>
-/// Service for analyzing tumor immune status (Scientists: Replace with real immune status calculations)
+/// Service for analyzing tumor immune status
 /// </summary>
 public class TumorImmuneStatusService : ITumorImmuneStatusService
 {
@@ -14,7 +14,7 @@ public class TumorImmuneStatusService : ITumorImmuneStatusService
     {
         try
         {
-            // TODO: Scientists - Replace this entire method with real immune status analysis
+            // TODO: Replace this entire method with real immune status analysis
             await Task.Delay(1); // Simulate processing time
             
             var hotColdScore = _random.Next(15, 85); // Generate score between 15-85 for demo

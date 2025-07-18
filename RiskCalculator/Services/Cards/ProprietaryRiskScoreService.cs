@@ -5,7 +5,7 @@ using SequestBioAI.RiskScore;
 namespace RiskCalculator.Services.Cards;
 
 /// <summary>
-/// Service for calculating proprietary risk scores (Scientists: Modify calculations here)
+/// Service for calculating proprietary risk scores
 /// </summary>
 public class ProprietaryRiskScoreService : IProprietaryRiskScoreService
 {
@@ -30,7 +30,7 @@ public class ProprietaryRiskScoreService : IProprietaryRiskScoreService
                 _ => "Low risk. Continue with standard protocols."
             };
 
-            // TODO: Scientists can add more sophisticated confidence calculations here
+            // TODO: Add more sophisticated confidence calculations here
             var confidence = CalculateConfidence(score, allContributors.Count);
 
             // Generate residual disease score (temporary random implementation)
@@ -80,14 +80,13 @@ public class ProprietaryRiskScoreService : IProprietaryRiskScoreService
 
     /// <summary>
     /// Calculate confidence score based on various factors
-    /// Scientists: Modify this method to improve confidence calculations
     /// </summary>
     /// <param name="score">The calculated risk score</param>
     /// <param name="contributorCount">Number of contributing factors</param>
     /// <returns>Confidence percentage</returns>
     private int CalculateConfidence(int score, int contributorCount)
     {
-        // Basic confidence calculation - Scientists can enhance this
+        // Basic confidence calculation - enhance this as needed
         int baseConfidence = 70;
         
         // More contributors = higher confidence
@@ -107,12 +106,12 @@ public class ProprietaryRiskScoreService : IProprietaryRiskScoreService
 
     /// <summary>
     /// Generate residual disease score (temporary random implementation)
-    /// Scientists: Replace this with actual residual disease calculation
+    /// Replace this with actual residual disease calculation
     /// </summary>
     /// <returns>Residual disease score (0-100)</returns>
     private int GenerateResidualDiseaseScore()
     {
-        // TODO: Scientists - implement actual residual disease calculation
+        // TODO: implement actual residual disease calculation
         // For now, generate a random score between 0-100
         var random = new Random();
         return random.Next(0, 101);

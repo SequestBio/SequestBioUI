@@ -5,13 +5,13 @@ using SequestBioAI.RiskScore;
 namespace RiskCalculator.Services.Cards;
 
 /// <summary>
-/// Service for analyzing key risk contributors (Scientists: Modify risk contributor analysis here)
+/// Service for analyzing key risk contributors
 /// </summary>
 public class KeyRiskContributorsService : IKeyRiskContributorsService
 {
     public Task<KeyRiskContributorsModel> GetKeyRiskContributorsAsync(string patientId, double? riskScore)
     {
-        // TODO: Scientists - Implement this method to fetch or calculate key risk contributors by patientId and riskScore
+        // TODO: Implement this method to fetch or calculate key risk contributors by patientId and riskScore
         // This method is not currently used by the application but may be needed for future database-based lookups
         return Task.FromResult(new KeyRiskContributorsModel
         {
@@ -83,7 +83,7 @@ public class KeyRiskContributorsService : IKeyRiskContributorsService
 
     public async Task<(List<RiskContributor> RiskFactors, List<RiskContributor> ProtectiveFactors)> SeparateRiskAndProtectiveFactorsAsync(List<RiskContributor> contributors)
     {
-        // Scientists: Enhance this method to improve categorization logic
+        // Enhance this method to improve categorization logic
         var riskFactors = contributors
             .Where(c => c.Impact == "High Risk" || c.Contribution > 0)
             .OrderByDescending(c => c.Contribution)
@@ -99,7 +99,7 @@ public class KeyRiskContributorsService : IKeyRiskContributorsService
 
     /// <summary>
     /// Generate a summary of key contributors
-    /// Scientists: Modify this method to enhance summary generation
+    /// Enhance this method to improve summary generation
     /// </summary>
     public async Task<string> GenerateContributorSummaryAsync(List<RiskContributor> contributors, ClinicalData clinicalData)
     {

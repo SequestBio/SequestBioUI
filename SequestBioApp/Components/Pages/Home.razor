@@ -6,6 +6,7 @@
 @using RiskCalculator.Models.Cards
 @using SequestBioAI.Data
 @using SequestBioApp.Components.Cards
+@using SequestBioApp.Components.Layout
 @rendermode InteractiveServer
 @inject SequestoneScoreService ScoreService
 @inject IProprietaryRiskScoreService ProprietaryService
@@ -22,6 +23,7 @@
 
 @if (!scoreGenerated)
 {
+    <!-- File Upload Form - NO SIDEBAR -->
     <div class="container mt-5">
         <div class="text-center mb-5">
             <h1 class="display-5 fw-bold">Welcome to <strong>SequestBioUI.App </strong></h1>
@@ -124,116 +126,126 @@
 }
 else
 {
-    <div class="results-container">
-        <!-- HERO SECTION -->
-        <div class="hero-section">
-            <div class="container-fluid">
-                <div class="text-center py-4">
-                    <div class="logo-container mb-3">
-                        <svg width="275" height="95" viewBox="0 0 2749 951" fill="none" xmlns="http://www.w3.org/2000/svg" class="sequestbio-logo">
-                            <path d="M133.95 352.765C119.977 365.941 111.743 375.497 103.882 387.77C94.9824 401.709 86.6441 420.957 83.0156 436.039C79.9873 448.64 77.8832 465.042 79.1125 466.674C81.4016 469.711 98.9369 461.966 123.471 447.006C141.732 435.892 157.965 425.599 172.298 415.945C178.459 411.831 188.291 405.216 194.241 401.174C208.898 391.364 231.149 375.831 258.096 356.583C270.403 347.75 282.527 339.144 285.129 337.447C290.417 333.815 301.086 329.48 306.268 328.75C308.169 328.464 309.789 328.037 309.816 327.84C309.969 326.755 297.702 322.063 286.002 318.709C265.689 312.937 241.257 311.063 220.104 313.773C208.373 315.293 189.774 320.224 181.021 324.174C178.389 325.363 175.561 326.525 174.772 326.766C173.941 326.951 171.141 328.268 168.58 329.668C165.977 331.012 162.277 333.007 160.335 333.941C156.648 335.837 137.028 349.828 133.95 352.765Z" fill="#41CA66"/>
-                            <path d="M78.3896 477.185C79.2206 489.523 84.6167 508.388 94.264 532.075C98.1596 541.575 99.0367 543.208 103.771 549.607C107.967 555.176 110.015 557.425 113.642 560.248C122.532 567.131 132.29 571.067 142.9 572.156C152.073 573.093 157.791 572.489 167.617 569.494L172.291 568.089L249.894 510.14C300.016 472.723 328.735 451.611 331.014 450.422C348.899 441.62 363.564 441.417 378.487 449.751C385.85 453.904 392.161 459.821 399.07 468.99C404.666 476.415 404.708 476.472 404.802 474.373C404.904 469.709 401.09 452.827 397.389 441.946C391.901 425.885 385.173 410.052 381.031 403.736C374.246 393.327 363.281 385.096 350.678 381.012C340.147 377.57 327.694 377.781 316.108 381.484L309.365 383.655L231.481 441.816C162.19 493.589 153.161 500.217 149.207 501.874C132.459 509.026 117.567 508.341 103.784 499.765C96.2931 495.091 92.5375 491.395 85.0345 481.438C81.4452 476.558 78.3792 472.606 78.2667 472.691C78.2105 472.733 78.2715 474.804 78.3896 477.185Z" fill="#41CA66"/>
-                            <path d="M172.361 623.776C172.913 624.507 182.67 628.443 190.931 631.214C209.231 637.357 234.524 640.258 255.384 638.562C274.511 637.025 298.233 630.35 313.978 622.102C316.258 620.913 320.268 618.861 322.871 617.517C330.033 613.796 350.551 598.07 356.973 591.378C367.107 580.832 372.094 574.692 378.804 564.168C389.065 548.057 395.161 534.026 399.964 515.237C402.366 505.666 405.276 484.599 404.344 483.361C402.012 480.267 377.584 492.325 347.762 511.27C344.006 513.659 337.661 517.646 333.694 520.107C329.77 522.623 321.288 528.221 314.845 532.546C308.403 536.872 298.684 543.402 293.184 547.105C278.485 556.859 254.504 573.607 222.085 596.714C190.285 619.354 188.526 620.414 177.374 622.468C174.473 623.066 172.234 623.607 172.361 623.776Z" fill="#41CA66"/>
-                            <circle cx="242" cy="475.5" r="219.5" stroke="#41CA66" stroke-width="45"/>
-                            <path d="M646.165 430.206C646.165 439.794 649.722 446.753 656.835 451.082C663.948 456.34 679.103 461.753 702.299 467.32C726.732 473.196 744.515 481.237 755.649 491.443C767.093 501.649 772.814 516.34 772.814 535.515C772.814 555.619 765.237 571.856 750.082 584.227C735.237 596.598 715.753 602.784 691.629 602.784C656.68 602.784 625.134 590.412 596.99 565.67L621.113 536.907C644.619 557.01 668.433 567.062 692.557 567.062C704.619 567.062 714.361 564.433 721.784 559.175C729.206 553.608 732.918 546.495 732.918 537.835C732.918 529.175 729.515 522.371 722.711 517.423C716.216 512.474 704.464 507.99 687.454 503.969C658.072 497.165 637.66 489.124 626.216 479.845C612.918 469.639 606.268 454.021 606.268 432.99C606.268 412.577 613.691 396.649 628.536 385.206C643.381 373.454 662.402 367.577 685.598 367.577C716.835 367.577 743.588 376.701 765.856 394.948L745.443 423.711C738.639 417.526 729.515 412.577 718.072 408.866C706.629 404.845 695.34 402.835 684.206 402.835C672.763 402.835 663.485 405.309 656.371 410.258C649.567 414.897 646.165 421.546 646.165 430.206ZM975.419 373.144V408.866H854.337V469.175H962.893V503.041H854.337V563.814H979.131V600H815.832V373.144H975.419ZM1128.43 602.32C1094.41 602.32 1065.96 591.186 1043.07 568.918C1020.19 546.34 1008.74 518.351 1008.74 484.948C1008.74 451.546 1020.19 423.711 1043.07 401.443C1065.96 378.866 1094.41 367.577 1128.43 367.577C1162.45 367.577 1190.91 378.866 1213.79 401.443C1236.68 423.711 1248.12 451.546 1248.12 484.948C1248.12 510 1241.32 532.423 1227.71 552.216C1214.1 571.701 1195.86 585.773 1172.97 594.433C1180.39 604.33 1189.67 609.278 1200.8 609.278C1209.15 609.278 1217.2 606.959 1224.93 602.32C1232.97 597.99 1239 592.423 1243.02 585.619L1264.82 615.773C1245.65 635.876 1224.15 645.928 1200.34 645.928C1186.11 645.928 1172.66 641.907 1159.98 633.866C1147.3 625.825 1138.48 615.155 1133.54 601.856L1128.43 602.32ZM1128.43 402.371C1105.86 402.371 1086.83 410.412 1071.37 426.495C1055.91 442.577 1048.18 462.062 1048.18 484.948C1048.18 507.835 1055.91 527.32 1071.37 543.402C1086.83 559.175 1105.86 567.062 1128.43 567.062C1151.01 567.062 1170.03 559.175 1185.49 543.402C1200.96 527.32 1208.69 507.835 1208.69 484.948C1208.69 462.062 1200.96 442.577 1185.49 426.495C1170.03 410.412 1151.01 402.371 1128.43 402.371ZM1385.24 566.134C1402.86 566.134 1416.78 560.103 1426.99 548.041C1437.5 535.979 1442.76 519.588 1442.76 498.866V373.144H1481.27V500.258C1481.27 532.423 1472.45 557.474 1454.82 575.412C1437.19 593.351 1414 602.32 1385.24 602.32C1356.47 602.32 1333.28 593.351 1315.65 575.412C1298.02 557.474 1289.2 532.423 1289.2 500.258V373.144H1327.25V498.866C1327.25 519.897 1332.5 536.289 1343.02 548.041C1353.22 560.103 1367.3 566.134 1385.24 566.134ZM1696.68 373.144V408.866H1575.6V469.175H1684.16V503.041H1575.6V563.814H1700.4V600H1537.1V373.144H1696.68ZM1775.47 430.206C1775.47 439.794 1779.03 446.753 1786.14 451.082C1793.26 456.34 1808.41 461.753 1831.61 467.32C1856.04 473.196 1873.82 481.237 1884.96 491.443C1896.4 501.649 1902.12 516.34 1902.12 535.515C1902.12 555.619 1894.54 571.856 1879.39 584.227C1864.54 596.598 1845.06 602.784 1820.94 602.784C1785.99 602.784 1754.44 590.412 1726.3 565.67L1750.42 536.907C1773.93 557.01 1797.74 567.062 1821.86 567.062C1833.93 567.062 1843.67 564.433 1851.09 559.175C1858.51 553.608 1862.22 546.495 1862.22 537.835C1862.22 529.175 1858.82 522.371 1852.02 517.423C1845.52 512.474 1833.77 507.99 1816.76 503.969C1787.38 497.165 1766.97 489.124 1755.52 479.845C1742.22 469.639 1735.57 454.021 1735.57 432.99C1735.57 412.577 1743 396.649 1757.84 385.206C1772.69 373.454 1791.71 367.577 1814.9 367.577C1846.14 367.577 1872.89 376.701 1895.16 394.948L1874.75 423.711C1867.95 417.526 1858.82 412.577 1847.38 408.866C1835.94 404.845 1824.65 402.835 1813.51 402.835C1802.07 402.835 1792.79 405.309 1785.68 410.258C1778.87 414.897 1775.47 421.546 1775.47 430.206ZM2030.96 407.938V600H1992.46V407.938H1923.8V373.144H2099.62V407.938H2030.96Z" fill="#113C35"/>
-                            <path d="M2137.07 600V373.144H2225.22C2257.07 373.144 2278.72 379.948 2290.17 393.557C2300.37 405 2305.48 418.144 2305.48 432.99C2305.48 450.928 2299.91 464.227 2288.77 472.887C2285.06 475.67 2279.5 478.763 2272.07 482.165C2286.3 485.258 2297.43 491.598 2305.48 501.186C2313.83 510.773 2318 522.68 2318 536.907C2318 554.845 2311.51 569.845 2298.52 581.907C2285.84 593.969 2265.11 600 2236.35 600H2137.07ZM2175.58 467.32H2223.83C2251.66 467.32 2265.58 457.887 2265.58 439.021C2265.58 428.196 2262.18 420.464 2255.37 415.825C2248.88 410.876 2238.52 408.402 2224.29 408.402H2175.58V467.32ZM2175.58 564.742H2235.42C2250.27 564.742 2261.25 562.423 2268.36 557.784C2275.48 552.835 2279.03 544.485 2279.03 532.732C2279.03 512.629 2262.95 502.577 2230.79 502.577H2175.58V564.742ZM2361.53 373.144H2400.03V600H2361.53V373.144ZM2562.95 402.371C2540.37 402.371 2521.35 410.412 2505.89 426.495C2490.42 442.577 2482.69 462.062 2482.69 484.948C2482.69 507.835 2490.42 527.32 2505.89 543.402C2521.35 559.175 2540.37 567.062 2562.95 567.062C2585.53 567.062 2604.55 559.175 2620.01 543.402C2635.47 527.32 2643.21 507.835 2643.21 484.948C2643.21 462.062 2635.47 442.577 2620.01 426.495C2604.55 410.412 2585.53 402.371 2562.95 402.371ZM2562.95 602.32C2528.93 602.32 2500.47 591.186 2477.59 568.918C2454.7 546.34 2443.26 518.351 2443.26 484.948C2443.26 451.546 2454.7 423.711 2477.59 401.443C2500.47 378.866 2528.93 367.577 2562.95 367.577C2596.97 367.577 2625.42 378.866 2648.31 401.443C2671.2 423.711 2682.64 451.546 2682.64 484.948C2682.64 518.351 2671.04 546.186 2647.85 568.454C2624.65 591.031 2596.35 602.32 2562.95 602.32Z" fill="#41CA66"/>
-                        </svg>
-                    </div>
-                    <div class="patient-info">
-                        <h4 class="mb-1">Patient: <span class="text-primary">@clinicalData.FullName</span></h4>
-                        <p class="text-muted mb-0">ID: <strong>@clinicalData.PatientId</strong> | Generated: <strong>@DateTime.Now.ToString("MMM dd, yyyy")</strong></p>
-                    </div>
-                </div>
-            </div>
+    <!-- Dashboard with Sidebar -->
+    <div class="dashboard-container">
+        <!-- Sidebar Component - Only show on dashboard -->
+        <Sidebar @bind-IsOpen="sidebarOpen" />
+        
+        <!-- Mobile Header with Toggle -->
+        <div class="mobile-header">
+            <button class="sidebar-toggle" @onclick="ToggleSidebar">
+                <span class="toggle-icon"></span>
+                <span class="toggle-icon"></span>
+                <span class="toggle-icon"></span>
+            </button>
+            <span class="mobile-title">SequestBio</span>
         </div>
 
-        <div class="container-fluid px-4">
-            <!-- TIER 1: CRITICAL INSIGHTS -->
-            <div class="results-tier tier-1" style="margin-top: 2rem;">
-                <div class="row g-4">
-                    <div class="col-lg-7 col-md-6">
-                        <div class="card-wrapper critical-card">
-                            <ProprietaryRiskScoreCard IsLoading="@isLoading" Model="@proprietaryModel" />
+        <!-- Main Dashboard Content -->
+        <div class="results-container @(sidebarOpen ? "with-sidebar" : "full-width")">
+            <!-- HERO SECTION -->
+            <div class="hero-section">
+                <div class="container-fluid">
+                    <div class="text-center py-4">
+                        <div class="logo-container mb-3">
+                            <img src="images/logo.svg" alt="SequestBio Logo" class="sequestbio-logo" />
                         </div>
-                    </div>
-                    <div class="col-lg-5 col-md-6">
-                        <div class="card-wrapper critical-card">
-                            <TumorImmuneStatusCard IsLoading="@isLoading" Model="@tumorImmuneStatusModel" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TIER 2: SUPPORTING DATA -->
-            <div class="results-tier tier-2">
-                <div class="tier-header">
-                    <h3 class="tier-title">Supporting Information</h3>
-                    <p class="tier-subtitle">Clinical context and outcome predictions</p>
-                </div>
-                <div class="row g-4">
-                    <div class="col-lg-4">
-                        <div class="card-wrapper supporting-card">
-                            <PatientSummaryCard IsLoading="@isLoading" Model="@patientSummaryModel" />
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="card-wrapper supporting-card">
-                            <TumorMicroenvironmentCard IsLoading="@isLoading" Model="@tumorMicroenvironmentModel" />
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="card-wrapper supporting-card">
-                            <PredictedOutcomeProbabilitiesCard IsLoading="@isLoading" Model="@predictedOutcomeProbabilitiesModel" />
+                        <div class="patient-info">
+                            <h4 class="mb-1">Patient: <span class="text-primary">@clinicalData.FullName</span></h4>
+                            <p class="text-muted mb-0">ID: <strong>@clinicalData.PatientId</strong> | Generated: <strong>@DateTime.Now.ToString("MMM dd, yyyy")</strong></p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- TIER 3: ANALYTICAL INSIGHTS -->
-            <div class="results-tier tier-3">
-                <div class="tier-header">
-                    <h3 class="tier-title">Analytical Insights</h3>
-                    <p class="tier-subtitle">Risk factors and performance benchmarks</p>
-                </div>
-                <div class="row g-4">
-                    <div class="col-lg-6">
-                        <div class="card-wrapper analytical-card">
-                            <KeyRiskContributorsCard IsLoading="@isLoading" Model="@keyRiskContributorsModel" />
+            <div class="container-fluid px-4">
+                <!-- TIER 1: CRITICAL INSIGHTS -->
+                <div class="results-tier tier-1" style="margin-top: 2rem;">
+                    <div class="row g-4">
+                        <div class="col-lg-7 col-md-6">
+                            <div class="card-wrapper critical-card">
+                                <ProprietaryRiskScoreCard IsLoading="@isLoading" Model="@proprietaryModel" />
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="card-wrapper analytical-card">
-                            <BenchmarkComparisonCard IsLoading="@isLoading" Model="@benchmarkComparisonModel" />
+                        <div class="col-lg-5 col-md-6">
+                            <div class="card-wrapper critical-card">
+                                <TumorImmuneStatusCard IsLoading="@isLoading" Model="@tumorImmuneStatusModel" />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- TIER 4: ADVANCED ANALYSIS -->
-            <div class="results-tier tier-4">
-                <div class="tier-header">
-                    <h3 class="tier-title">Advanced Analysis</h3>
-                    <p class="tier-subtitle">Feature contribution analysis</p>
-                </div>
-                <div class="row g-4">
-                    <div class="col-12">
-                        <div class="card-wrapper advanced-card">
-                            <ShapWaterfallCard IsLoading="@isLoading" Model="@shapWaterfallModel" />
+                <!-- TIER 2: SUPPORTING DATA -->
+                <div class="results-tier tier-2">
+                    <div class="tier-header">
+                        <h3 class="tier-title">Supporting Information</h3>
+                        <p class="tier-subtitle">Clinical context and outcome predictions</p>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-lg-4">
+                            <div class="card-wrapper supporting-card">
+                                <PatientSummaryCard IsLoading="@isLoading" Model="@patientSummaryModel" />
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="card-wrapper supporting-card">
+                                <TumorMicroenvironmentCard IsLoading="@isLoading" Model="@tumorMicroenvironmentModel" />
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="card-wrapper supporting-card">
+                                <PredictedOutcomeProbabilitiesCard IsLoading="@isLoading" Model="@predictedOutcomeProbabilitiesModel" />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- TIER 5: DETAILED INSIGHTS -->
-            <div class="results-tier tier-5">
-                <div class="tier-header">
-                    <h3 class="tier-title">Detailed Clinical Insights</h3>
-                    <p class="tier-subtitle">Comprehensive pathway and treatment response analysis</p>
+                <!-- TIER 3: ANALYTICAL INSIGHTS -->
+                <div class="results-tier tier-3">
+                    <div class="tier-header">
+                        <h3 class="tier-title">Analytical Insights</h3>
+                        <p class="tier-subtitle">Risk factors and performance benchmarks</p>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <div class="card-wrapper analytical-card">
+                                <KeyRiskContributorsCard IsLoading="@isLoading" Model="@keyRiskContributorsModel" />
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="card-wrapper analytical-card">
+                                <BenchmarkComparisonCard IsLoading="@isLoading" Model="@benchmarkComparisonModel" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="row g-4">
-                    <div class="col-12">
-                        <div class="card-wrapper detailed-card">
-                            <TabbedInsightsCard IsLoading="@isLoading" Model="@tabbedInsightsModel" />
+
+                <!-- TIER 4: ADVANCED ANALYSIS -->
+                <div class="results-tier tier-4">
+                    <div class="tier-header">
+                        <h3 class="tier-title">Advanced Analysis</h3>
+                        <p class="tier-subtitle">Feature contribution analysis</p>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="card-wrapper advanced-card">
+                                <ShapWaterfallCard IsLoading="@isLoading" Model="@shapWaterfallModel" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TIER 5: DETAILED INSIGHTS -->
+                <div class="results-tier tier-5">
+                    <div class="tier-header">
+                        <h3 class="tier-title">Detailed Clinical Insights</h3>
+                        <p class="tier-subtitle">Comprehensive pathway and treatment response analysis</p>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="card-wrapper detailed-card">
+                                <TabbedInsightsCard IsLoading="@isLoading" Model="@tabbedInsightsModel" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -242,9 +254,103 @@ else
     </div>
 }
 
+<style>
+    /* Dashboard Layout */
+    .dashboard-container {
+        position: relative;
+        min-height: 100vh;
+    }
+
+    /* Mobile Header - only show on dashboard */
+    .mobile-header {
+        display: none;
+        align-items: center;
+        padding: 16px 20px;
+        background: #ffffff;
+        border-bottom: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        z-index: 100;
+        position: sticky;
+        top: 0;
+    }
+
+    .sidebar-toggle {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 8px;
+        transition: background-color 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-right: 16px;
+    }
+
+    .sidebar-toggle:hover {
+        background: #f8fafc;
+    }
+
+    .toggle-icon {
+        width: 20px;
+        height: 2px;
+        background: #374151;
+        border-radius: 1px;
+        transition: all 0.3s ease;
+    }
+
+    .mobile-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    /* Results Container with Sidebar Support */
+    .results-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        transition: margin-left 0.3s ease;
+    }
+
+    .results-container.with-sidebar {
+        margin-left: 280px;
+    }
+
+    .results-container.full-width {
+        margin-left: 0;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .mobile-header {
+            display: flex;
+        }
+
+        .results-container {
+            margin-left: 0 !important;
+        }
+
+        .results-container.with-sidebar,
+        .results-container.full-width {
+            margin-left: 0;
+        }
+    }
+
+    @@media (min-width: 769px) {
+        .mobile-header {
+            display: none;
+        }
+
+        .results-container.with-sidebar {
+            margin-left: 280px;
+        }
+    }
+</style>
+
 @code {
-    private bool scoreGenerated = false; // Start with form instead of results
+    private bool scoreGenerated = false;
     private bool isLoading = false;
+    private bool sidebarOpen = true;
 
     // Clinical data form binding
     private ClinicalData clinicalData = new();
@@ -264,12 +370,16 @@ else
     private bool fileSelected => uploadedFile != null;
     private MemoryStream? cachedFileStream;
 
+    private void ToggleSidebar()
+    {
+        sidebarOpen = !sidebarOpen;
+    }
+
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
         uploadedFile = e.File;
         cachedFileStream = new MemoryStream();
         await uploadedFile.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(cachedFileStream);
-        // Don't set scoreGenerated here - only after actual processing
     }
 
     private async Task UploadAndGenerateScore()
@@ -278,11 +388,11 @@ else
         {
             if (cachedFileStream == null)
             {
-                Console.WriteLine("❌ No cached file stream available");
+                Console.WriteLine("No cached file stream available");
                 return;
             }
 
-            Console.WriteLine("🚀 Starting score generation...");
+            Console.WriteLine("Starting score generation...");
 
             // Set loading state
             isLoading = true;
@@ -296,23 +406,23 @@ else
 
             // Process file with clinical data - get the main risk score
             cachedFileStream.Position = 0;
-            Console.WriteLine("📊 Calling ScoreService.GetScoreAsync...");
+            Console.WriteLine("Calling ScoreService.GetScoreAsync...");
             proprietaryModel = await ScoreService.GetScoreAsync(cachedFileStream, clinicalData);
-            Console.WriteLine($"✅ Proprietary model generated: Score={proprietaryModel.Score}, Category={proprietaryModel.RiskCategory}");
+            Console.WriteLine($"Proprietary model generated: Score={proprietaryModel.Score}, Category={proprietaryModel.RiskCategory}");
             
             scoreGenerated = true;
 
             // Generate all other card models using services
-            Console.WriteLine("🔄 Generating other card models...");
+            Console.WriteLine("Generating other card models...");
             await GenerateCardModels();
 
-            Console.WriteLine($"🔢 Risk Category: {proprietaryModel.RiskCategory}");
-            Console.WriteLine($"👤 Patient: {clinicalData.FullName}");
+            Console.WriteLine($"Risk Category: {proprietaryModel.RiskCategory}");
+            Console.WriteLine($"Patient: {clinicalData.FullName}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine("❌ Exception in UploadAndGenerateScore: " + ex.Message);
-            Console.WriteLine("❌ Stack trace: " + ex.StackTrace);
+            Console.WriteLine("Exception in UploadAndGenerateScore: " + ex.Message);
+            Console.WriteLine("Stack trace: " + ex.StackTrace);
         }
         finally
         {
@@ -326,7 +436,7 @@ else
     {
         try
         {
-            Console.WriteLine("🔄 Starting card model generation...");
+            Console.WriteLine("Starting card model generation...");
             
             // Generate models using injected services (proprietaryModel already generated)
             var tasks = new List<Task>
@@ -342,12 +452,12 @@ else
             };
 
             await Task.WhenAll(tasks);
-            Console.WriteLine("✅ All card models generated successfully");
+            Console.WriteLine("All card models generated successfully");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"❌ Error generating card models: {ex.Message}");
-            Console.WriteLine($"❌ Stack trace: {ex.StackTrace}");
+            Console.WriteLine($"Error generating card models: {ex.Message}");
+            Console.WriteLine($"Stack trace: {ex.StackTrace}");
         }
     }
 
@@ -355,13 +465,13 @@ else
     {
         try
         {
-            Console.WriteLine("📋 Generating patient summary model...");
+            Console.WriteLine("Generating patient summary model...");
             patientSummaryModel = await PatientSummaryService.ProcessPatientDataAsync(clinicalData);
-            Console.WriteLine($"✅ Patient summary model generated: HasData={patientSummaryModel.HasClinicalData}");
+            Console.WriteLine($"Patient summary model generated: HasData={patientSummaryModel.HasClinicalData}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"❌ Error generating patient summary: {ex.Message}");
+            Console.WriteLine($"Error generating patient summary: {ex.Message}");
         }
     }
 

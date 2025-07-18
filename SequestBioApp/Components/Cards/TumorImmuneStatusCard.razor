@@ -3,11 +3,11 @@
 
 <div class="professional-card">
     @if (IsLoading)
-    {
+                {
         <div class="loading-container">
             <div class="loading-spinner"></div>
             <p class="loading-text">Analyzing immune status...</p>
-        </div>
+                        </div>
     }
     else if (Model != null && Model.IsAnalysisComplete)
     {
@@ -16,15 +16,15 @@
             <div class="card-header-section">
                 <h2 class="main-title">Tumor Immune Status</h2>
                 <p class="subtitle">Hot vs Cold tumor classification</p>
-            </div>
+                            </div>
 
             <!-- Main Slider Section -->
             <div class="slider-section">
                 <div class="status-container">
                     <div class="status-track"></div>
                     <div class="status-indicator" style="left: @GetIndicatorPosition(Model.TumorHotColdScore)%;"></div>
-                </div>
-                
+                    </div>
+
                 <div class="status-labels">
                     <div class="status-label">
                         <div class="label-title">COLD</div>
@@ -38,25 +38,25 @@
                         <div class="label-title">HOT</div>
                         <div class="label-description">High immune activity</div>
                     </div>
-                </div>
+                        </div>
                 
                 <div class="current-status">
                     <div class="status-value">@Model.TumorHotColdScore</div>
                     <div class="status-classification @GetStatusClass(Model.TumorHotColdScore)">@GetStatusLabel(Model.TumorHotColdScore) Tumor</div>
                     <div class="status-description">Immune infiltration score</div>
-                </div>
-            </div>
-        </div>
+                            </div>
+                        </div>
+                    </div>
     }
     else
     {
         <div class="no-data-container">
-            <div class="no-data-icon">🔥</div>
+            <div class="no-data-icon">No Data</div>
             <h3 class="no-data-title">No Immune Data Available</h3>
             <p class="no-data-description">Upload RNAseq data to analyze tumor immune status</p>
+                </div>
+            }
         </div>
-    }
-</div>
 
 <style>
     .professional-card {

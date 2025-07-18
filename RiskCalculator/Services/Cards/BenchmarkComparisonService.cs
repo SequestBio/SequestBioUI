@@ -5,7 +5,7 @@ using SequestBioAI.RiskScore;
 namespace RiskCalculator.Services.Cards;
 
 /// <summary>
-/// Service for benchmark comparison analysis (Scientists: Replace with real benchmark calculations)
+/// Service for benchmark comparison analysis
 /// </summary>
 public class BenchmarkComparisonService : IBenchmarkComparisonService
 {
@@ -18,7 +18,7 @@ public class BenchmarkComparisonService : IBenchmarkComparisonService
             // Get the real Sequestone score
             var sequestoneScore = await RiskScoreCalculator.CalculateRiskCategory(tsvFileStream);
             
-            // TODO: Scientists - Replace these with real benchmark calculations
+            // TODO: Replace these with real benchmark calculations
             // For now, use mock data for comparison methods
             var clinicalFactorsScore = CalculateMockClinicalScore(clinicalData);
             var stagingScore = CalculateMockStagingScore(clinicalData);
@@ -77,7 +77,7 @@ public class BenchmarkComparisonService : IBenchmarkComparisonService
 
     public Task<BenchmarkComparisonModel> GetBenchmarkComparisonAsync(string patientId, double? riskScore)
     {
-        // TODO: Scientists - This method is not currently used but may be needed for future database-based lookups
+        // TODO: This method is not currently used but may be needed for future database-based lookups
         return Task.FromResult(new BenchmarkComparisonModel
         {
             BenchmarkData = new List<BenchmarkPoint>(),
