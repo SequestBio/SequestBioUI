@@ -1,14 +1,39 @@
 using Blazorise;
 using Blazorise.Bootstrap5;
 using Blazorise.Charts;
+using Microsoft.EntityFrameworkCore;
 using RiskCalculator.Services.RiskScore;
 using RiskCalculator.Services.Tumor;
 using SequestBioApp.Components;
 using Radzen;
+using RiskCalculator.Services.AiPipeline;
+using RiskCalculator.Services.BiasMitigation;
+using RiskCalculator.Services.FeatureSelection;
+using SequestBioAI.DataProcessing;
+using SequestBioAI.ModelTraining;
+using SequestBioRepo.DbContext;
+using SequestBioRepo.Repositories;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Register DbContext with your connection string
+builder.Services.AddDbContext<SequestBioDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Register Repository
+builder.Services.AddScoped<IPatientSampleRepository, PatientSampleRepository>();
+
+// AI pipeline services
+builder.Services.AddScoped<FeatureSelectionService>();
+builder.Services.AddScoped<AiPipelineService>();
+builder.Services.AddScoped<BiasMitigationService>(); 
+builder.Services.AddScoped<SequestoneScoreService>();
+builder.Services.AddScoped<DataPreprocessor>();
+builder.Services.AddScoped<ModelTrainer>();
+
+
+// Existing services
 builder.Services.AddScoped<SequestoneScoreService>();
 builder.Services.AddScoped<TumorFeatureService>();
 builder.Services.AddHttpClient();

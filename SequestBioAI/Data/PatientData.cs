@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace SequestBioAI.Data;
 
 public class PatientData

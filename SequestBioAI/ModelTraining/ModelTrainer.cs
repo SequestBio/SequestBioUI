@@ -38,6 +38,21 @@ namespace SequestBioAI.ModelTraining
 
             return (float)metrics.AreaUnderRocCurve;
         }
+        
+        public float Predict(ITransformer model, SampleData input)
+        {
+            var predictionEngine = _mlContext.Model.CreatePredictionEngine<SampleData, PredictionResult>(model);
+            var result = predictionEngine.Predict(input);
+            return result.Probability; // or result.Score depending on your use case
+        }
+
+        public class PredictionResult
+        {
+            public bool PredictedLabel { get; set; }
+            public float Probability { get; set; }
+            public float Score { get; set; }
+        }
+
     }
 
     public class SampleData

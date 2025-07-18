@@ -8,6 +8,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SequestBioAI", "SequestBioA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SequestBioQuantum", "SequestBioQuantum\SequestBioQuantum.csproj", "{C715C654-8DDA-49DD-912B-AAE382BF31DC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SequestBioRepo", "SequestBioRepo\SequestBioRepo.csproj", "{C1CB1A7C-7AC4-4E69-84F6-50F6CA34695F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SequestBioDataModel", "SequestBioDataModel\SequestBioDataModel.csproj", "{132D80CC-FD7A-4856-9201-0F9C923F7072}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,13 @@ Global
 		{C715C654-8DDA-49DD-912B-AAE382BF31DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C715C654-8DDA-49DD-912B-AAE382BF31DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C715C654-8DDA-49DD-912B-AAE382BF31DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1CB1A7C-7AC4-4E69-84F6-50F6CA34695F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1CB1A7C-7AC4-4E69-84F6-50F6CA34695F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1CB1A7C-7AC4-4E69-84F6-50F6CA34695F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1CB1A7C-7AC4-4E69-84F6-50F6CA34695F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{132D80CC-FD7A-4856-9201-0F9C923F7072}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{132D80CC-FD7A-4856-9201-0F9C923F7072}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{132D80CC-FD7A-4856-9201-0F9C923F7072}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{132D80CC-FD7A-4856-9201-0F9C923F7072}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
